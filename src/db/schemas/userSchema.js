@@ -1,7 +1,13 @@
 import mongoose from 'mongoose';
+import shortId from './types/shortId';
 const {Schema}=mongoose;
 
 const userSchema=new Schema({
+    userId:{
+        type:String,
+        ...shortId
+    },
+
     username:{
         type:String,
         required: true,
