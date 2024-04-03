@@ -27,7 +27,7 @@
   font-size: 26px;
   text-align: center;
   margin-bottom: 30px;
-  
+
   color: #632ed8;
   font-weight: 600;
 }
@@ -90,11 +90,11 @@
   display: flex;
   align-items: center;
 }
-.sing-up_inner form p i {
+.sing-up_inner form p svg {
   display: none;
-  font-size: 16px;
   margin-left: 5px;
   color: inherit;
+  width: 15px;
 }
 .sing-up_inner form .invalid input {
   border-color: #f15746;
@@ -104,12 +104,18 @@
   border-color: #f15746;
 }
 .sing-up_inner form .invalid p {
-  color: #f15746;
+  color: #f15746; 
+  svg{
+    fill: #f15746;
+  }
 }
 .sing-up_inner form .valid p {
-  color: rgb(0, 168, 0);
+  color: #632ed8;
+  svg{
+    fill: #632ed8;
+  }
 }
-.sing-up_inner form .valid p i {
+.sing-up_inner form .valid p svg {
   display: block;
 }
 .sing-up_inner form input {
@@ -143,7 +149,11 @@
   cursor: pointer;
   margin-bottom: 0;
   color: #fff;
+  &:focus {
+    border: none;
+  }
 }
+
 .sing-up_inner .sing-up_route {
   display: flex;
   justify-content: center;
