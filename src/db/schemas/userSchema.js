@@ -5,7 +5,8 @@ const {Schema}=mongoose;
 const userSchema=new Schema({
     userId:{
         type:String,
-        ...shortId
+        ...shortId,
+        required: true
     },
 
     username:{
