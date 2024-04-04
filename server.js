@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import express from 'express';
 import dotenv from 'dotenv';
-import { apiRouter } from './routes/api.js';
+import { viewsRouter } from './routes/viewRouter.js';
 
 dotenv.config();
 
@@ -52,7 +52,7 @@ const url = 'mongodb+srv://petmate:1234@petmate.bhm01el.mongodb.net/?retryWrites
 
 
 //Serve APIs
-app.use('/api', apiRouter);
+app.use('/routes', viewsRouter);
 
 // Serve HTML
 app.use('*', async (req, res) => {
