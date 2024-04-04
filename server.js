@@ -9,6 +9,8 @@ dotenv.config();
 const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 5173;
 const base = process.env.BASE || '/';
+const db_id = process.env.DB_ID;
+const db_pw = process.env.DB_PW;
 
 // Cached production assets
 const templateHtml = isProduction ? await fs.readFile('./dist/client/index.html', 'utf-8') : '';
@@ -37,11 +39,11 @@ if (!isProduction) {
 import { MongoClient } from 'mongodb';
 
 let db;
-const url = 'mongodb+srv://petmate:1234@petmate.bhm01el.mongodb.net/?retryWrites=true&w=majority&appName=PetMate';
+const url = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PW}@petmate.bhm01el.mongodb.net/?retryWrites=true&w=majority&appName=PetMate`;
 
 (async () => {
   try {
-    const client = await MongoClient.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+    const client = await MongoClient.connect(url);
     console.log('DB 연결 성공');
     db = client.db('forum');
   } catch (err) {
