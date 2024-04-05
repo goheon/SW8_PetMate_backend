@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import express from 'express';
 import dotenv from 'dotenv';
 import { authRouter } from './routes/auth.js';
+import { userRouter } from './routes/users.js';
 import mongoose from "mongoose";
 dotenv.config();
 
@@ -53,7 +54,7 @@ connectToMongoDB();
 
 //Serve APIs
 app.use('/signup',authRouter);
-
+app.use('/mypage', userRouter);
 
 // Serve HTML
 app.use('*', async (req, res) => {
