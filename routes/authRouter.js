@@ -7,17 +7,19 @@ export const authRouter = express.Router();
 // 회원가입
 authRouter.post('/', async (req, res) => {
     try {
+    
+        const { username, email, password, phone, address, detailAddress } = req.body;
         console.log(req.body)
-        const { username, email, password, phone, userAddress, detailAddress } = req.body;
 
         const newUser = await User.create({
             username,
             email,
             password,
             phone,
-            userAddress,
+            address,
             detailAddress
         });
+
         console.log(newUser); 
 
         res.status(201).json({message:"회원가입 성공!"});

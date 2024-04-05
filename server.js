@@ -3,7 +3,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { viewsRouter } from './routes/viewRouter.js';
 import { authRouter } from './routes/authRouter.js';
-
+import mongoose from "mongoose";
 dotenv.config();
 
 // Constants
@@ -38,26 +38,24 @@ if (!isProduction) {
   app.use(base, sirv('./dist/client', { extensions: [] }));
 }
 //mongoose, mongodb 연결
-import { MongoClient } from 'mongodb';
-
-let db;
-const url = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PW}@petmate.bhm01el.mongodb.net/?retryWrites=true&w=majority&appName=PetMate`;
-
-(async () => {
+async function connectToMongoDB() {
   try {
-    const client = await MongoClient.connect(url);
-    console.log('DB 연결 성공');
-    db = client.db('forum');
-  } catch (err) {
-    console.log(err);
+    await mongoose.connect(
+      `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PW}@petmate.bhm01el.mongodb.net/?retryWrites=true&w=majority&appName=PetMate`,
+    );
+    console.log("MongoDB connected successfully");
+  } catch (error) {
+    console.error("Error connecting to MongoDB:", error);
   }
-})();
+}
 
+connectToMongoDB();
 
 
 //Serve APIs
 app.use('/routes', viewsRouter);
 app.use('/signup',authRouter);
+
 
 // Serve HTML
 app.use('*', async (req, res) => {
