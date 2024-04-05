@@ -2,6 +2,7 @@ import fs from 'node:fs/promises';
 import express from 'express';
 import dotenv from 'dotenv';
 import { viewsRouter } from './routes/viewRouter.js';
+import { authRouter } from './routes/authRouter.js';
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ const ssrManifest = isProduction ? await fs.readFile('./dist/client/.vite/ssr-ma
 // Create http server
 const app = express();
 
+app.use(express.json());
 // Add Vite or respective production middlewares
 let vite;
 if (!isProduction) {
@@ -55,6 +57,7 @@ const url = `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PW}@petmate.bhm
 
 //Serve APIs
 app.use('/routes', viewsRouter);
+app.use('/signup',authRouter);
 
 // Serve HTML
 app.use('*', async (req, res) => {
