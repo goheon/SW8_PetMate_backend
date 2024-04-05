@@ -1,8 +1,8 @@
 import mongoose from "mongoose";
-import userSchema from "./schemas/userSchema";
-import orderSchema from "./schemas/orderSchema";
-import petsitterSchema from "./schemas/petsitterSchema";
-import reviewSchema from "./schemas/reviewSchema";
+import userSchema from "../userSchema";
+import orderSchema from "../orderSchema";
+import petsitterSchema from "../petsitterSchema";
+import reviewSchema from "../reviewSchema";
 
 export const User = mongoose.model('User', userSchema);
 export const Order = mongoose.model('Order', orderSchema);

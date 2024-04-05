@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import shortId from './types/shortId';
+import shortId from './types/shortId.js';
 const {Schema}=mongoose;
 
 const userSchema=new Schema({
@@ -26,7 +26,11 @@ const userSchema=new Schema({
         required:true,
     },
     address:{
-        type:Number,
+        type:String,
+        required:true,
+    },
+    detailAddress:{
+        type:String,
         required:true,
     },
     isRole:{
