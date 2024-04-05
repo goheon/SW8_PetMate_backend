@@ -1,17 +1,16 @@
 import express from 'express';
 import { User } from '../db/models/userModel.js';
 
-
 export const authRouter = express.Router();
 
 // 회원가입
 authRouter.post('/', async (req, res) => {
     try {
     
-        const { username, email, password, phone, address, detailAddress } = req.body;
-        console.log(req.body)
+        const { userId, username, email, password, phone, address, detailAddress } = req.body;
 
         const newUser = await User.create({
+            userId,
             username,
             email,
             password,
@@ -19,8 +18,6 @@ authRouter.post('/', async (req, res) => {
             address,
             detailAddress
         });
-
-        console.log(newUser); 
 
         res.status(201).json({message:"회원가입 성공!"});
     }catch(error){
