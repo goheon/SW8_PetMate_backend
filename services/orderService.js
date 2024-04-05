@@ -1,6 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable no-return-await */
-// 불러오기
 const Order = require('../db/index.js');
 
 class OrderService {
@@ -8,31 +5,13 @@ class OrderService {
     this.Order = Order;
   }
 
-  // 상품 추가 시 빈 필드 확인
-  // eslint-disable-next-line class-methods-use-this
-  async checkOrderField(reqBody) {
-    // 빈값 확인하는 함수
-    function isEmpty(value) {
-      return value == null || value === '';
-    }
-    // 빈값 여부 확인
-    const is_empty = Object.values(reqBody).some(isEmpty);
-    if (!is_empty) {
-      return Object.values(reqBody).some(isEmpty);
-    } else {
-      const e = new Error('주문을 추가하기 위해선 모든 필드가 채워져야 합니다.');
-      e.status = 405;
-      throw e;
-    }
-  }
-
   // 주문 ID 확인
   async checkOrderId(orderId) {
-    const checkOrder = await this.Order.findOne({ _id: orderId });
+    const checkOrder = await this.Order.findOne({ orderId: orderId });
     if (checkOrder) {
       return checkOrder;
     } else {
-      const e = new Error('해당 id의 주문이 없습니다.');
+      const e = new Error('해당 주문식별 아이디의 주문이 없습니다.');
       e.status = 404;
       throw e;
     }
@@ -43,29 +22,40 @@ class OrderService {
     return await this.Order.find({});
   }
 
-  // 특정 유저의 주문 목록 조회
+  // 특정 사용자의 주문 목록 조회
   async getOrderListOfUser(userId) {
-    return await this.Order.find({ user_id: userId });
+    return await this.Order.find({ userId: userId });
   }
 
   // 주문 추가
-  async addOrder(userId) {
-    return await this.Order.create({ user_id: userId });
+  async addOrder(orderInfo) {
+    const { orderId, userId, sitterId, pets, totalPrice, createdAt, state, detailInfo, start, end } = orderInfo;
+    return await this.Order.create({
+      orderId,
+      userId,
+      sitterId,
+      pets,
+      totalPrice,
+      createdAt,
+      state,
+      detailInfo,
+      start,
+      end
+    });
   }
 
-  // 주문 가격
-  async setOrder(orderId, orderPrice) {
+  // 주문 수정
+  async updateOrder(orderId, updatedInfo) {
     return await this.Order.findOneAndUpdate(
-      { _id: orderId },
-      {
-        order_price: orderPrice,
-      },
+      { orderId: orderId },
+      { $set: updatedInfo },
+      { new: true }
     );
   }
 
   // 주문 취소
   async cancelOrder(orderId) {
-    return await this.Order.deleteOne({ _id: orderId });
+    return await this.Order.deleteOne({ orderId: orderId });
   }
 }
 

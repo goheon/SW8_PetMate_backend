@@ -1,4 +1,3 @@
-// 불러오기
 const PetSitter = require('../db/index.js');
 
 class PetSitterService {
@@ -24,7 +23,7 @@ class PetSitterService {
     return await this.PetSitter.find({});
   }
 
-  // 특정 펫시터 조회(필요 유무에 따라 수정 가능)
+  // 특정 펫시터 조회
   async getPetSitterById(sitterId) {
     return await this.PetSitter.findOne({ sitterId: sitterId });
   }
@@ -35,16 +34,10 @@ class PetSitterService {
   }
 
   // 펫시터 정보 업데이트
-  async updatePetSitter(sitterId, experience, introduction, hourlyRate, image, type) {
+  async updatePetSitter(sitterId, updatedInfo) {
     return await this.PetSitter.findOneAndUpdate(
       { sitterId: sitterId },
-      {
-        experience: experience,
-        introduction: introduction,
-        hourlyRate: hourlyRate,
-        image: image,
-        type: type
-      },
+      { $set: updatedInfo },
       { new: true }
     );
   }
