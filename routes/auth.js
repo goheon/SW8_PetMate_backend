@@ -8,8 +8,8 @@ authRouter.post('/', async (req, res) => {
     try {
     
         const { userId, username, email, password, phone, address, detailAddress } = req.body;
-
-        const newUser = await User.create({
+        console.log(req.body)
+        await User.create({
             userId,
             username,
             email,

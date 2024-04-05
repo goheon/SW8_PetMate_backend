@@ -1,6 +1,7 @@
-import { User } from "./db/index.js";
+import { User } from '../db/models/userModel.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 class UserService {
   constructor() {
@@ -18,6 +19,7 @@ class UserService {
       throw e;
     }
   }
+
 
   // 회원가입
   async createUser(info) {
