@@ -1,9 +1,15 @@
 import fs from 'node:fs/promises';
 import express from 'express';
 import dotenv from 'dotenv';
+
+
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/users.js';
+
 import mongoose from "mongoose";
+
+import errorMiddleware from './middlewares/errorMiddleware.js';
+
 dotenv.config();
 
 // Constants
@@ -52,9 +58,13 @@ async function connectToMongoDB() {
 connectToMongoDB();
 
 
-//Serve APIs
+//페이지 api
 app.use('/signup',authRouter);
 app.use('/mypage', userRouter);
+
+//미들웨어
+app.use(errorMiddleware);
+
 
 // Serve HTML
 app.use('*', async (req, res) => {
