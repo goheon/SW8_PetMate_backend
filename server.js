@@ -58,11 +58,11 @@ async function connectToMongoDB() {
 connectToMongoDB();
 
 
-//Serve APIs
+//페이지 api
 app.use('/signup',authRouter);
 app.use('/mypage', userRouter);
 
-
+//미들웨어
 app.use(errorMiddleware);
 
 

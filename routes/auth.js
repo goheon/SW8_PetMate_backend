@@ -6,9 +6,9 @@ export const authRouter = express.Router();
 // 회원가입
 authRouter.post('/', async (req, res, next) => {
     try {
-    
+
         const { userId, username, email, password, phone, address, detailAddress } = req.body;
-        console.log(req.body)
+
         await User.create({
             userId,
             username,

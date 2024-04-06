@@ -4,7 +4,7 @@ import userService from "../services/userService.js";
 export const userRouter = express.Router();
 
 //회원 정보 조회
-userRouter.get('/:userId', async (req,res)=>{
+userRouter.get('/:userId', async (req,res,next)=>{
     try{
         const userId = req.params.userId
         const searchUser=await userService.getUserInfo(userId);
@@ -15,10 +15,9 @@ userRouter.get('/:userId', async (req,res)=>{
             password: searchUser.password,
             phone: searchUser.phone,
             address: searchUser.address,
-            detailAddress: searchUser.password,
+            detailAddress: searchUser.detailAddress,
         })
-        }catch(error){
-            console.error("정보 조회 중 오류 발생",error);
-            res.status(500).json({message:"서버오류"});
-    }
+        }catch (error) {
+            next(error); // 에러를 다음 미들웨어로 전달
+        }
 })
