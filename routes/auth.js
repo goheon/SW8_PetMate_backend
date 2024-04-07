@@ -1,5 +1,4 @@
 import express from 'express';
-import { User } from '../db/index.js';
 import { setUserToken } from '../utils/jwt.js';
 import userService from '../services/userService.js';
 

@@ -59,7 +59,8 @@ class UserService {
   async getUserToken(email, password) {
     const user=await User.findOne({email});
 
-    if(!user || user.password !== password){
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if(!isValidPassword){
         throw new Error("인증 실패")
     }
     return user;
