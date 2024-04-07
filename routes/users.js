@@ -1,10 +1,11 @@
 import express from 'express';
 import userService from "../services/userService.js";
+import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 
 export const userRouter = express.Router();
 
 //회원 정보 조회
-userRouter.get('/:userId', async (req,res,next)=>{
+userRouter.get('/:userId',tokenAuthenticated, async (req,res,next)=>{
     try{
         const userId = req.params.userId
         const searchUser=await userService.getUserInfo(userId);
