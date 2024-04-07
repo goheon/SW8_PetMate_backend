@@ -1,6 +1,7 @@
 import express from 'express';
 import { User } from '../db/index.js';
 import { setUserToken } from '../utils/jwt.js';
+import userService from '../services/userService.js';
 
 export const authRouter = express.Router();
 
@@ -10,7 +11,7 @@ authRouter.post('/signup', async (req, res, next) => {
 
         const { userId, username, email, password, phone, address, detailAddress } = req.body;
 
-        await User.create({
+        await userService.createUser({
             userId,
             username,
             email,
@@ -32,11 +33,8 @@ authRouter.post('/login',async (req,res,next)=>{
         //사용자 인증
         const {email, password}=req.body;
 
-        const user=await User.findOne({email});
+        const user=await userService.getUserToken(email,password)
 
-        if(!user || user.password !== password){
-            return res.status(401).json({message: "인증 실패"})
-        }
         //인증 성공시 토큰 생성
         setUserToken(res,user)
 

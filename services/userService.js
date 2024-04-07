@@ -56,35 +56,13 @@ class UserService {
   }
 
   // 로그인 시 이메일로 사용자 데이터 조회
-  async getUserToken(userId, userPw) {
-    const userData = await User.findOne({ userId: userId });
+  async getUserToken(email, password) {
+    const user=await User.findOne({email});
 
-    if (!userData) {
-      const e = new Error('올바르지 않은 ID');
-      e.status = 404;
-      throw e;
+    if(!user || user.password !== password){
+        throw new Error("인증 실패")
     }
-
-    const comparePassword = await this.comparePasswords(
-      userPw,
-      userData.password
-    );
-
-    if (!comparePassword) {
-      const e = new Error('올바르지 않은 비밀번호');
-      e.status = 404;
-      throw e;
-    }
-
-    const secretKey = process.env.JWT_SECRET_KEY;
-    return jwt.sign({
-      userId: userData.userId,
-      isRole: userData.isRole,
-    }, secretKey);
-  }
-
-  async comparePasswords(inputPassword, hashedPassword) {
-    return bcrypt.compare(inputPassword, hashedPassword);
+    return user;
   }
 }
 
