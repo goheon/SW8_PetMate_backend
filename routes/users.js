@@ -21,3 +21,7 @@ userRouter.get('/:userId', async (req,res,next)=>{
             next(error); // 에러를 다음 미들웨어로 전달
         }
 })
+
+//회원 정보 수정
+
+//회원 탈퇴

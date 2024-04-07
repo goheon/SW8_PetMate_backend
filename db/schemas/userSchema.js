@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import shortId from './types/shortId.js';
 const {Schema}=mongoose;
 
-const userSchema=new Schema({
+export const userSchema=new Schema({
     userId:{
         type:String,
         ...shortId,

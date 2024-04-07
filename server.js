@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import express from 'express';
 import dotenv from 'dotenv';
-
+import cookieParser from 'cookie-parser';
 
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/users.js';
@@ -57,13 +57,13 @@ async function connectToMongoDB() {
 
 connectToMongoDB();
 
-
-//페이지 api
-app.use('/signup',authRouter);
-app.use('/mypage', userRouter);
-
 //미들웨어
 app.use(errorMiddleware);
+app.use(cookieParser());
+
+//페이지 api
+app.use('/',authRouter);
+app.use('/mypage', userRouter);
 
 
 // Serve HTML
