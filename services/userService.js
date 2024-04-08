@@ -23,11 +23,11 @@ class UserService {
 
   // 회원가입
   async createUser(info) {
-    const { username, email, password, phone, address, detailAddress, isRole } = info;
+    const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
     const hashedPassword = await bcrypt.hash(password, 10);
 
     await User.create({
-      userId: username,
+      userId,
       username,
       email,
       password: hashedPassword,
