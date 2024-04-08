@@ -17,3 +17,16 @@ export const tokenAuthenticated=(req,res,next)=>{
         next();
     })
 }
+
+//토큰 삭제
+export const tokendeleted=(req,res,next)=>{
+    const token = req.cookies.jwt;
+
+    if (token == null) {
+        return res.status(401).json({ message: '로그인된 사용자가 아닙니다.' });
+    }
+
+    res.clearCookie('jwt');
+    res.send("로그아웃 성공!")
+}
+

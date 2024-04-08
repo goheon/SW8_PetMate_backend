@@ -23,7 +23,7 @@ export const userSchema=new Schema({
     },
     phone:{
         type:Number,
-        required:true,
+        required:false,
     },
     address:{
         type:String,

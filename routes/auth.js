@@ -1,6 +1,7 @@
 import express from 'express';
 import { setUserToken } from '../utils/jwt.js';
 import userService from '../services/userService.js';
+import { tokendeleted } from '../middlewares/tokenMiddleware.js';
 
 export const authRouter = express.Router();
 
@@ -43,3 +44,10 @@ authRouter.post('/login',async (req,res,next)=>{
 })
 
 //로그아웃
+authRouter.post('/logout', async (req, res, next) => {
+    try {
+        await tokendeleted(req, res, next);
+    } catch (error) {
+        next(error);
+    }
+});
