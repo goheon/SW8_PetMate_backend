@@ -27,6 +27,22 @@ authRouter.post('/signup', async (req, res, next) => {
     }
 })
 
+//이메일 중복 검사
+authRouter.post('/check-email', async (req,res,next)=>{
+    try{
+        const {email}=req.body;
+
+        if (!email) {
+            return res.status(400).json({ message: '이메일을 제공해주세요.' });
+        }
+        await userService.duplicationCheck(email)
+        res.status(200).json({ message: '사용 가능한 이메일입니다.' });
+    }catch(error){
+        next(error);
+    }
+})
+
+
 //로그인
 authRouter.post('/login',async (req,res,next)=>{
     try{

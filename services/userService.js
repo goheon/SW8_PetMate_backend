@@ -8,6 +8,17 @@ class UserService {
     this.User = User;
   }
 
+  //이메일 중복 검사
+  async duplicationCheck(email){
+    const joinuser=await this.User.findOne({email: email});
+
+    if(joinuser===null || joinuser===undefined){
+      return ;
+    }else{
+      throw new Error('이미 가입된 사용자입니다.')
+    }
+  }
+
   // 회원정보 조회
   async getUserInfo(userId) {
     const userInfo = await this.User.findOne({ userId: userId });
