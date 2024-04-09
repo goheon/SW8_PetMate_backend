@@ -1,6 +1,8 @@
 import express from 'express';
 import userService from "../services/userService.js";
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
+import { User } from '../db/index.js';
+import jwt from 'jsonwebtoken';
 
 export const userRouter = express.Router();
 
@@ -33,14 +35,14 @@ userRouter.put('/:userId', tokenAuthenticated, async (req, res, next) => {
 });
 
 //회원 탈퇴
-userRouter.delete('/:userId', tokenAuthenticated, async (req, res, next) => {
+userRouter.delete('/resign', tokenAuthenticated, async (req, res, next) => {
     try {
-        const userId = req.params.userId;
-        await userService.deleteUser(userId);
+        //쿠키에서 유저 이메일 추출
+        const token = req.cookies.jwt;
+        userService.deleteUser(token);
+        res.status(200).json({message:"탈퇴 완료!"})
 
-        res.status(200).json({
-            message: '회원 탈퇴가 완료되었습니다.'
-        });
+        //나중에 추가할 내용: 예약 진행상태면 탈퇴불가
     } catch (error) {
         next(error);
     }
