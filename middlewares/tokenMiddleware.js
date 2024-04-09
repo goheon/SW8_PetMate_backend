@@ -5,7 +5,7 @@ export const tokenAuthenticated=(req,res,next)=>{
     const token=req.cookies.jwt;
 
     if(token==null){
-        return res.status(401);
+        return res.status(401).send("인증되지 않은 요청입니다. 로그인이 필요합니다.");
     }
     //토큰 유효한지 확인(verify)
     const key=process.env.SECRET_KEY;
