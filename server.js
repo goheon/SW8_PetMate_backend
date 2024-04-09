@@ -9,6 +9,7 @@ import { booklistRouter } from './routes/booklist.js';
 import mongoose from "mongoose";
 
 import errorMiddleware from './middlewares/errorMiddleware.js';
+import completeRouter from './routes/complete.js';
 
 
 dotenv.config();
@@ -67,6 +68,7 @@ app.use(cookieParser());
 app.use('/', authRouter);
 app.use('/mypage', userRouter);
 app.use('/booklist', booklistRouter);
+app.use('/orderinfo', completeRouter);
 
 
 // Serve HTML

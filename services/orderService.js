@@ -58,6 +58,15 @@ class OrderService {
   async cancelOrder(orderId) {
     return await this.Order.deleteOne({ orderId: orderId });
   }
+
+  // 주문 완료
+  async completeOrder(userId, orderId) {
+    return await this.Order.findOneAndUpdate(
+      { userId: userId, orderId: orderId },
+      { $set: { state: '완료' } },
+      { new: true }
+    );
+  }
 }
 
 export default new OrderService();
