@@ -10,6 +10,6 @@ export const setUserToken=(res,user)=>{
 
     //토큰을 쿠키로 전달
     res.cookie('jwt', token, { httpOnly: false });
-    res.send(token);
+    res.send('로그인 성공!');
 } 
 

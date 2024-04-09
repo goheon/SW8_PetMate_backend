@@ -40,6 +40,10 @@ export const userSchema=new Schema({
     deletedAt:{
         type:Date,
         required: false,
+    },
+    point:{
+        type:Number,
+        required: false,
     }
 })
 
