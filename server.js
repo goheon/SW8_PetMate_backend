@@ -65,7 +65,7 @@ app.use(cookieParser());
 //페이지 api
 app.use('/',authRouter);
 app.use('/mypage', userRouter);
-app.use('/sitterDetial', sitterDetailRouter);
+app.use('/sitterDetail', sitterDetailRouter);
 
 // Serve HTML
 app.use('*', async (req, res) => {
