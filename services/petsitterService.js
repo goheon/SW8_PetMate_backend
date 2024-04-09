@@ -1,4 +1,4 @@
-const PetSitter = require('../db/index.js');
+import { PetSitter } from '../db/index.js';
 
 class PetSitterService {
   constructor() {
@@ -48,4 +48,4 @@ class PetSitterService {
   }
 }
 
-module.exports = new PetSitterService();
+export default new PetSitterService();

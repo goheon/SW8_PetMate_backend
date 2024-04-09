@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/users.js';
+import { sitterDetailRouter } from './routes/sitterDetail.js';
 
 import mongoose from "mongoose";
 
@@ -64,7 +65,7 @@ app.use(cookieParser());
 //페이지 api
 app.use('/',authRouter);
 app.use('/mypage', userRouter);
-
+app.use('/sitterDetial', sitterDetailRouter);
 
 // Serve HTML
 app.use('*', async (req, res) => {
