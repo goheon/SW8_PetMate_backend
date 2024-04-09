@@ -9,7 +9,7 @@ export const setUserToken=(res,user)=>{
     const token=jwt.sign({email},secret)
 
     //토큰을 쿠키로 전달
-    res.cookie('jwt',token);
-    res.send('로그인 성공!');
+    res.cookie('jwt', token, { httpOnly: false });
+    res.send(token);
 } 
 
