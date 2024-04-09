@@ -33,8 +33,8 @@ const petsitterSchema = new Schema({
     rate:{type:Number, required:true}
   }],
   image: {
-    type: String,
-    required: true,
+    type: [String],
+    default: "public/images/default.png"
   },
   type: [{
     animal:{type: String, required:true},

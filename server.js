@@ -28,6 +28,7 @@ const ssrManifest = isProduction ? await fs.readFile('./dist/client/.vite/ssr-ma
 const app = express();
 app.use(express.json());
 
+
 // Add Vite or respective production middlewares
 let vite;
 if (!isProduction) {
@@ -66,6 +67,7 @@ app.use(cookieParser());
 app.use('/',authRouter);
 app.use('/mypage', userRouter);
 app.use('/sitterDetail', sitterDetailRouter);
+
 
 // Serve HTML
 app.use('*', async (req, res) => {

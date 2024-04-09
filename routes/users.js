@@ -1,6 +1,7 @@
 import express from 'express';
 import userService from "../services/userService.js";
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
+import { uploadFiles } from "../middlewares/imageMiddleware.js";
 import { User } from '../db/index.js';
 import jwt from 'jsonwebtoken';
 
@@ -51,35 +52,41 @@ userRouter.delete('/resign', tokenAuthenticated, async (req, res, next) => {
 });
 
 //펫시터 등록
-userRouter.post('/:userId/sitter', tokenAuthenticated, async (req,res,next)=>{
+userRouter.post('/:userId/sitter', tokenAuthenticated, uploadFiles.fields([{name:'img',maxCount:3}]), async (req,res,next)=>{
     try{
         const userId=req.params.userId;
         const user = await User.findOne({ userId: userId });
 
-        const { sitterId, image, type, phone, introduction, experience, hourlyRate, title } = req.body;
+        const uploadFiles=req.files['img'];
+        const uploadimg = uploadFiles ? uploadFiles.map(file => file.path) : ["public/images/default.jpg"];
+
+        const { sitterId, type, phone, introduction, experience, hourlyRate, title } = req.body;
+
+        const parsedHourlyRate = JSON.parse(hourlyRate);
+        const parsedType = JSON.parse(type);
 
         if (user.isRole === "1") {
             return res.status(400).json({ message: '이미 펫시터 계정입니다.' });
         }
 
-        const updateUser=await User.findOneAndUpdate(
+        await PetSitter.create({
+            sitterId,
+            userId,
+            image: uploadimg,
+            type: parsedType,
+            phone,
+            introduction,
+            experience,
+            hourlyRate: parsedHourlyRate,
+            title,
+            isRole: "1"
+        })
+        await User.findOneAndUpdate(
             {userId: userId},
             {isRole: "1"},
             { new: true } //업데이트된 정보 반환
         )
 
-        await PetSitter.create({
-            sitterId,
-            userId,
-            image,
-            type,
-            phone,
-            introduction,
-            experience,
-            hourlyRate,
-            title,
-            isRole: updateUser.isRole
-        })
         res.status(201).json({ message: '펫시터 등록 완료!' });
     } catch (error) {
         next(error);
