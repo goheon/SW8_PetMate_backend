@@ -66,7 +66,9 @@ userRouter.put('/:userId', async (req, res, next) => {
 // 회원 탈퇴
 userRouter.patch('/:userId/delete', tokenAuthenticated, async (req, res, next) => {
     try {
+        //토큰에서 받은 정보로 조회 -> 정보는 살려두고 쿼리 파라미터로 아이디 받지 말기. 쿠키에서 쿠키..?
         const userId = req.params.userId;
+        console.log(userId);
         await User.findOneAndDelete({ userId: userId });
 
         res.status(200).json({

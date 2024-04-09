@@ -1,4 +1,5 @@
-const Order = require('../db/index.js');
+import { Order } from '../db/index.js';
+
 
 class OrderService {
   constructor() {
@@ -59,4 +60,4 @@ class OrderService {
   }
 }
 
-module.exports = new OrderService();
+export default new OrderService();
