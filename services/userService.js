@@ -66,10 +66,10 @@ class UserService {
         const key=process.env.SECRET_KEY;
         const decodeToken=jwt.verify(token,key);
 
-        const email=decodeToken.email
+        const userId=decodeToken.userId
 
         //이메일과 일치하는 user softDelete
-        const user=await User.findOne({email})
+        const user=await User.findOne({userId})
 
         if(user){
             user.deletedAt=new Date();
@@ -96,5 +96,6 @@ class UserService {
     return user;
   }
 }
+
 
 export default new UserService();

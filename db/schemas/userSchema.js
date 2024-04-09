@@ -35,7 +35,7 @@ export const userSchema=new Schema({
     },
     isRole:{
         type:String,
-        required:false,
+        default: undefined,
     },
     deletedAt:{
         type:Date,
