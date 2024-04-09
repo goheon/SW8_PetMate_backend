@@ -8,6 +8,17 @@ class UserService {
     this.User = User;
   }
 
+  //이메일 중복 검사
+  async duplicationCheck(email){
+    const joinuser=await this.User.findOne({email: email});
+
+    if(joinuser===null || joinuser===undefined){
+      return ;
+    }else{
+      throw new Error('이미 가입된 사용자입니다.')
+    }
+  }
+
   // 회원정보 조회
   async getUserInfo(userId) {
     const userInfo = await this.User.findOne({ userId: userId });
@@ -51,13 +62,32 @@ class UserService {
   }
 
   //회원탈퇴
-  async deleteUser(userId) {
-    return await User.findOneAndDelete({ userId: userId });
+  async deleteUser(token) {
+        const key=process.env.SECRET_KEY;
+        const decodeToken=jwt.verify(token,key);
+
+        const email=decodeToken.email
+
+        //이메일과 일치하는 user softDelete
+        const user=await User.findOne({email})
+
+        if(user){
+            user.deletedAt=new Date();
+            await user.save();
+            return
+          }
   }
 
   // 로그인 시 이메일로 사용자 데이터 조회
   async getUserToken(email, password) {
     const user=await User.findOne({email});
+
+    //soft delete된 사용자인지 확인
+    if (user){
+      if(user.deletedAt){
+        throw new Error("탈퇴한 회원입니다.")
+      }
+    }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if(!isValidPassword){

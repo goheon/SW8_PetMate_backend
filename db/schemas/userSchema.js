@@ -37,9 +37,9 @@ export const userSchema = new Schema({
         type: String,
         required: false,
     },
-    deletedAt: {
-        type: Date,
-        default: null,
+    point: {
+        type: Number,
+        required: false,
     }
 })
 
