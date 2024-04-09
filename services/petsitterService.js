@@ -1,4 +1,4 @@
-const PetSitter = require('../db/index.js');
+import { PetSitter } from '../db/index.js';
 
 class PetSitterService {
   constructor() {
@@ -25,8 +25,9 @@ class PetSitterService {
 
   // 특정 펫시터 조회
   async getPetSitterById(sitterId) {
-    return await this.PetSitter.findOne({ sitterId: sitterId });
-  }
+    const petSitter = await this.PetSitter.findOne({ sitterId: sitterId });
+    return petSitter; 
+}
 
   // 특정 사용자의 펫시터 조회
   async getPetSitterByUserId(userId) {
@@ -48,4 +49,4 @@ class PetSitterService {
   }
 }
 
-module.exports = new PetSitterService();
+export default new PetSitterService();

@@ -1,7 +1,13 @@
 import mongoose from 'mongoose';
+import shortId from './types/shortId.js'; 
 const { Schema } = mongoose;
 
 const petsitterSchema = new Schema({
+  sitterId: {
+    type: String,
+    ...shortId,
+    required: true,
+  },
   userId: {
     type: String,
     required: true,
