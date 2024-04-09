@@ -36,7 +36,6 @@ authRouter.post('/login',async (req,res,next)=>{
 
         //인증 성공시 토큰 생성
         setUserToken(res,user)
-
     }catch(error){
         next(error);
     }
