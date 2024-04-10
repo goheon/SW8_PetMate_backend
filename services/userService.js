@@ -84,7 +84,7 @@ class UserService {
   }
 
   //펫시터 등록
-  async registerSitter(token, body, files) {
+  async registerSitter(token, body, uploadimg) {
     try {
       const key = process.env.SECRET_KEY;
       const decodeToken = jwt.verify(token, key);
@@ -92,9 +92,6 @@ class UserService {
       const userId = decodeToken.userId;
 
       const user = await User.findOne({ userId });
-
-      const uploadFiles = files['img'];
-      const uploadimg = uploadFiles ? uploadFiles.map(file => file.path) : ["public/images/default.jpg"];
 
       const { sitterId, type, phone, introduction, experience, hourlyRate, title } = body;
 

@@ -78,7 +78,8 @@ userRouter.post('/sitter', tokenAuthenticated, uploadFiles.fields([{name:'img',m
     try{
         const token=req.cookies.jwt
         const uploadFiles=req.files['img'];
-        const result=await userService.registerSitter(token, req.body, uploadFiles)
+        const uploadimg = uploadFiles ? uploadFiles.map(file => file.path) : ["public/images/default.jpg"];
+        const result=await userService.registerSitter(token, req.body,uploadimg)
 
         if (result.success) {
             res.status(201).json({ message: result.message });
