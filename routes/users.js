@@ -10,16 +10,17 @@ import { PetSitter } from '../db/index.js';
 export const userRouter = express.Router();
 
 //회원 정보 조회
-userRouter.get('/:userId', tokenAuthenticated, async (req, res, next) => {
+userRouter.get('/', tokenAuthenticated, async (req, res, next) => {
     try {
-        const userId = req.params.userId
-        const searchUser = await userService.getUserInfo(userId);
+        const token=req.cookies.jwt
+        const searchUser = await userService.getUserInfo(token);
 
         res.status(200).json(searchUser);
     } catch (error) {
         next(error); // 에러를 다음 미들웨어로 전달
     }
 })
+
 
 //회원 정보 수정
 userRouter.put('/:userId', tokenAuthenticated, async (req, res, next) => {

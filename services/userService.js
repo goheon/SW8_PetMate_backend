@@ -21,7 +21,11 @@ class UserService {
   }
 
   // 회원정보 조회
-  async getUserInfo(userId) {
+  async getUserInfo(token) {
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(token, key);
+
+    const userId = decodeToken.userId
     const userInfo = await this.User.findOne({ userId: userId });
     if (userInfo) {
       return userInfo;
