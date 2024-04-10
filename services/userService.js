@@ -109,7 +109,7 @@ class UserService {
         return { success: false, message: '이미 펫시터 계정입니다.' };
       }
 
-      await PetSitter.create({
+      const newSitter = await PetSitter.create({
         sitterId,
         userId,
         image: uploadimg,
@@ -128,7 +128,7 @@ class UserService {
         { new: true } //업데이트된 정보 반환
       );
 
-      return { success: true, message: '펫시터 등록 완료!' };
+      return { success: true, message: '펫시터 등록 완료!', sitterId: newSitter.sitterId };
     } catch (error) {
       throw error;
     }

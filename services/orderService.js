@@ -1,5 +1,5 @@
 import { Order } from '../db/index.js';
-
+import jwt from 'jsonwebtoken';
 
 class OrderService {
   constructor() {
@@ -29,19 +29,25 @@ class OrderService {
   }
 
   // 주문 추가
-  async addOrder(orderInfo) {
-    const { orderId, userId, sitterId, pets, totalPrice, createdAt, state, detailInfo, start, end } = orderInfo;
+  async addOrder(sitterId, orderInfo, token) {
+    const { orderId, pets, totalPrice, detailInfo, startDate, endDate } = orderInfo;
+    const currentDate = new Date().toISOString();
+
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(token, key);
+    const userId = decodeToken.userId;
+
     return await this.Order.create({
       orderId,
       userId,
       sitterId,
       pets,
       totalPrice,
-      createdAt,
-      state,
+      createdAt: currentDate,
+      state: "예약요청",
       detailInfo,
-      start,
-      end
+      startDate,
+      endDate
     });
   }
 
