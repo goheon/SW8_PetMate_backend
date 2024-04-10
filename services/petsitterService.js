@@ -5,19 +5,6 @@ class PetSitterService {
     this.PetSitter = PetSitter;
   }
 
-  // 펫시터 등록
-  async registerPetSitter(sitterId, userId, experience, introduction, hourlyRate, image, type) {
-    return await this.PetSitter.create({
-      sitterId: sitterId,
-      userId: userId,
-      experience: experience,
-      introduction: introduction,
-      hourlyRate: hourlyRate,
-      image: image,
-      type: type
-    });
-  }
-
   // 모든 펫시터 목록 조회
   async getAllPetSitters() {
     return await this.PetSitter.find({});
@@ -47,6 +34,8 @@ class PetSitterService {
   async deletePetSitter(sitterId) {
     return await this.PetSitter.deleteOne({ sitterId: sitterId });
   }
+
+
 }
 
 export default new PetSitterService();

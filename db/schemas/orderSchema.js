@@ -1,7 +1,13 @@
 import mongoose from 'mongoose';
+import shortId from './types/shortId.js'; 
 const { Schema } = mongoose;
 
 const orderSchema = new Schema({
+  orderId: {
+    type: String,
+    ...shortId,
+    required: true,
+  },
   userId: {
     type: String,
     required: true,
@@ -10,6 +16,10 @@ const orderSchema = new Schema({
     type: String,
     required: true,
   },
+  pets: [{
+    type:{type: String, required:true},
+    size: {type:String, required:true}
+  }],
   totalPrice: {
     type: Number,
     required: true,
@@ -20,8 +30,20 @@ const orderSchema = new Schema({
   },
   state: {
     type: String,
+    default:"예약요청",
+  },
+  detailInfo: {
+    type: String,
     required: true,
   },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate:{
+    type: Date,
+    required: true,
+  }
 
 })
 

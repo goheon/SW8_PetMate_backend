@@ -3,7 +3,6 @@ import userService from "../services/userService.js";
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 import { uploadFiles } from "../middlewares/imageMiddleware.js";
 import { User } from '../db/index.js';
-import jwt from 'jsonwebtoken';
 
 import { PetSitter } from '../db/index.js';
 
@@ -61,7 +60,7 @@ userRouter.post('/sitter', tokenAuthenticated, uploadFiles.fields([{name:'img',m
         const result=await userService.registerSitter(token, req.body,uploadimg)
 
         if (result.success) {
-            res.status(201).json({ message: result.message });
+            res.status(201).json({ message: result.message ,  sitterId: result.sitterId });
         } else {
             res.status(400).json({ message: result.message });
         }
