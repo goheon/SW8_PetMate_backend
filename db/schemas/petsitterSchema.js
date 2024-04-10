@@ -21,7 +21,7 @@ const petsitterSchema = new Schema({
     required: true,
   },
   experience: {
-    type: String,
+    type: [String],
     required: true,
   },
   introduction: {
