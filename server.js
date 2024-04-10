@@ -5,11 +5,14 @@ import cookieParser from 'cookie-parser';
 
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/users.js';
+import { booklistRouter } from './routes/booklist.js';
 import { sitterDetailRouter } from './routes/sitterDetail.js';
 
 import mongoose from "mongoose";
 
 import errorMiddleware from './middlewares/errorMiddleware.js';
+import completeRouter from './routes/complete.js';
+
 
 dotenv.config();
 
@@ -64,8 +67,11 @@ app.use(errorMiddleware);
 app.use(cookieParser());
 
 //페이지 api
-app.use('/',authRouter);
+
+app.use('/', authRouter);
 app.use('/mypage', userRouter);
+app.use('/booklist', booklistRouter);
+app.use('/orderinfo', completeRouter);
 app.use('/sitterDetail', sitterDetailRouter);
 
 

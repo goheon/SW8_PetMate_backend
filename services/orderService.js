@@ -1,4 +1,5 @@
-const Order = require('../db/index.js');
+import { Order } from '../db/index.js';
+
 
 class OrderService {
   constructor() {
@@ -57,6 +58,15 @@ class OrderService {
   async cancelOrder(orderId) {
     return await this.Order.deleteOne({ orderId: orderId });
   }
+
+  // 주문 완료
+  async completeOrder(userId, orderId) {
+    return await this.Order.findOneAndUpdate(
+      { userId: userId, orderId: orderId },
+      { $set: { state: '완료' } },
+      { new: true }
+    );
+  }
 }
 
-module.exports = new OrderService();
+export default new OrderService();
