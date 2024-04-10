@@ -11,7 +11,7 @@ export const userRouter = express.Router();
 //회원 정보 조회
 userRouter.get('/', tokenAuthenticated, async (req, res, next) => {
     try {
-        const token=req.cookies.jwt
+        const token = req.cookies.jwt
         const searchUser = await userService.getUserInfo(token);
 
         res.status(200).json(searchUser);
@@ -20,36 +20,13 @@ userRouter.get('/', tokenAuthenticated, async (req, res, next) => {
     }
 })
 
-
 //회원 정보 수정
-userRouter.put('/:userId', async (req, res, next) => {
+userRouter.put('/', tokenAuthenticated, async (req, res, next) => {
     try {
-        const userId = req.params.userId;
-        const { username, email, password, phone, address, detailAddress } = req.body;
+        const token = req.cookies.jwt;
+        const userInfo = req.body;
+        const updatedUser = await userService.updateUserInfo(token, userInfo);
 
-        // 업데이트할 사용자 정보 객체 생성
-        const updatedInfo = {
-            username,
-            email,
-            password,
-            phone,
-            address,
-            detailAddress
-        };
-
-        // 패스워드가 전달되었을 경우 해싱
-        if (password) {
-            updatedInfo.password = await bcrypt.hash(password, 10);
-        }
-
-        // 사용자 정보 업데이트
-        const updatedUser = await User.findOneAndUpdate(
-            { userId: userId },
-            { $set: updatedInfo },
-            { new: true }
-        );
-
-        // 업데이트된 사용자 정보 반환
         res.status(200).json({
             message: '회원 정보가 수정되었습니다.',
             data: updatedUser
@@ -74,12 +51,12 @@ userRouter.delete('/resign', tokenAuthenticated, async (req, res, next) => {
 });
 
 //펫시터 등록
-userRouter.post('/sitter', tokenAuthenticated, uploadFiles.fields([{name:'img',maxCount:3}]), async (req,res,next)=>{
-    try{
-        const token=req.cookies.jwt
-        const uploadFiles=req.files['img'];
+userRouter.post('/sitter', tokenAuthenticated, uploadFiles.fields([{ name: 'img', maxCount: 3 }]), async (req, res, next) => {
+    try {
+        const token = req.cookies.jwt
+        const uploadFiles = req.files['img'];
         const uploadimg = uploadFiles ? uploadFiles.map(file => file.path) : ["public/images/default.jpg"];
-        const result=await userService.registerSitter(token, req.body,uploadimg)
+        const result = await userService.registerSitter(token, req.body, uploadimg)
 
         if (result.success) {
             res.status(201).json({ message: result.message });

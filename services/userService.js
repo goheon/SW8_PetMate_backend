@@ -54,11 +54,18 @@ class UserService {
     });
   }
 
-  //회원정보 수정
-  async updateUserInfo(userId, updatedInfo) {
+  // 회원 정보 수정
+  async updateUserInfo(token, updatedInfo) {
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(token, key);
+
+    const userId = decodeToken.userId;
+
+    // 패스워드가 전달되었을 경우 해싱
     if (updatedInfo.password) {
       updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
     }
+
     return await User.findOneAndUpdate(
       { userId: userId },
       { $set: updatedInfo },
