@@ -73,6 +73,16 @@ class OrderService {
       { new: true }
     );
   }
+  // 주문 상태 변경
+  async updateOrderStatus(orderId, status) {
+    return await this.Order.findOneAndUpdate(
+      { orderId: orderId },
+      { $set: { status: status } },
+      { new: true }
+    );
+  }
 }
 
+
 export default new OrderService();
+

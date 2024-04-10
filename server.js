@@ -7,12 +7,11 @@ import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/users.js';
 import { booklistRouter } from './routes/booklist.js';
 import { orderSitterRouter } from './routes/ordersitter.js';
-
+import { sitterMyPageRouter } from './routes/sittermypage.js';
 
 import mongoose from "mongoose";
 
 import errorMiddleware from './middlewares/errorMiddleware.js';
-import completeRouter from './routes/complete.js';
 
 
 dotenv.config();
@@ -72,8 +71,8 @@ app.use(cookieParser());
 app.use('/', authRouter);
 app.use('/mypage', userRouter);
 app.use('/booklist', booklistRouter);
-app.use('/orderinfo', completeRouter);
 app.use('/orderSitter', orderSitterRouter);
+app.use('/sitterpage', sitterMyPageRouter);
 
 
 
@@ -112,3 +111,5 @@ app.use('*', async (req, res) => {
 app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);
 });
+
+

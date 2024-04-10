@@ -1,4 +1,6 @@
 import { PetSitter } from '../db/index.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 class PetSitterService {
   constructor() {
@@ -22,7 +24,17 @@ class PetSitterService {
   }
 
   // 펫시터 정보 업데이트
-  async updatePetSitter(sitterId, updatedInfo) {
+
+  async updatePetSitter(token, updatedInfo) {
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(token, key);
+    const sitterId = decodeToken.sitterId; // 토큰에서 sitterId 추출
+
+    // 패스워드가 전달되었을 경우 해싱
+    if (updatedInfo.password) {
+      updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
+    }
+
     return await this.PetSitter.findOneAndUpdate(
       { sitterId: sitterId },
       { $set: updatedInfo },
@@ -30,12 +42,12 @@ class PetSitterService {
     );
   }
 
+
   // 펫시터 삭제
   async deletePetSitter(sitterId) {
     return await this.PetSitter.deleteOne({ sitterId: sitterId });
   }
-
-
 }
 
 export default new PetSitterService();
+
