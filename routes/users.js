@@ -3,6 +3,7 @@ import userService from "../services/userService.js";
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 import { User } from '../db/index.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
 export const userRouter = express.Router();
 
