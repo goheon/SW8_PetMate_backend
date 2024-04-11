@@ -28,8 +28,9 @@ orderSitterRouter.post('/:sitterId', async (req, res, next) => {
         if (!token) {
             res.status(400).send("로그인한 사용자만 예약이 가능합니다.");
         }
-        await orderService.addOrder(sitterId, req.body, token);
-        res.status(200).json({ message: "예약 완료!" });
+        const result=await orderService.addOrder(sitterId, req.body, token);
+        
+        res.status(201).json({ message: result.message, orderId: result.orderId });
     } catch (error) {
         next(error);
     }

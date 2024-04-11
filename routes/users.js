@@ -2,9 +2,6 @@ import express from 'express';
 import userService from "../services/userService.js";
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 import { uploadFiles } from "../middlewares/imageMiddleware.js";
-import { User } from '../db/index.js';
-
-import { PetSitter } from '../db/index.js';
 
 export const userRouter = express.Router();
 

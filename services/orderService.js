@@ -37,7 +37,7 @@ class OrderService {
     const decodeToken = jwt.verify(token, key);
     const userId = decodeToken.userId;
 
-    return await this.Order.create({
+    const newOrder= await this.Order.create({
       orderId,
       userId,
       sitterId,
@@ -49,6 +49,7 @@ class OrderService {
       startDate,
       endDate
     });
+    return { success: true, message: '예약완료!', orderId: newOrder.orderId };
   }
 
   // 주문 수정

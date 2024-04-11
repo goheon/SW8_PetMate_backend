@@ -1,5 +1,5 @@
 import express from 'express';
-import userService from "../services/userService.js";
+// import reviewService from "../services/reviewService.js";
 import orderService from "../services/orderService.js";
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 
@@ -21,20 +21,7 @@ booklistRouter.get('/:userId', tokenAuthenticated, async (req, res, next) => {
   }
 });
 
-// 진행중인 예약 내역 조회
-booklistRouter.get('/booklist/:orderId', tokenAuthenticated, async (req, res, next) => {
-  try {
-    const orderId = req.params.orderId;
-    const userId = req.user.id;
+// 리뷰 작성
+// booklistRouter.post('/review', tokenAuthenticated, async(req, res, next)=>{
 
-    const order = await userService.getOngoingOrder(userId, orderId);
-
-    res.status(200).json({
-      message: '진행중인 예약 내역 조회가 완료되었습니다.',
-      data: order
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-export default booklistRouter;
+// })
