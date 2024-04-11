@@ -6,43 +6,52 @@ import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 export const sitterMyPageRouter = express.Router();
 
 // 펫시터 정보 수정
-sitterMyPageRouter.put('/:sitterId', tokenAuthenticated, async (req, res, next) => {
+sitterMyPageRouter.put('/:sitterId', async (req, res, next) => {
   try {
-    const token = req.cookies.jwt;
-    const sitterInfo = req.body;
-    const updatedPetSitter = await petSitterService.updatePetSitter(token, sitterInfo);
+    const sitterId = req.params.sitterId;
+    const sitterInfo = req;
+    const updatedPetSitter = await petSitterService.updatePetSitter(sitterId, sitterInfo);
+    console.log(sitterId, sitterInfo);
+
+    if (sitterId === null) {
+      return res.status(404).json({ message: '일치하는 펫시터가 없습니다.' });
+    } else {
+      res.status(200).json({
+        message: '펫시터 정보가 수정되었습니다.',
+        data: updatedPetSitter,
+      });
+    };
+
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 예약 요청
+sitterMyPageRouter.patch('/:orderId/progress', async (req, res, next) => {
+  try {
+    const orderId = req.params.orderId;
+    const newState = '요청';
+    await orderService.updateOrderStatus(orderId, newState);
 
     res.status(200).json({
-      message: '펫시터 정보가 수정되었습니다.',
-      data: updatedPetSitter,
+      message: '주문 상태가 예약 요청으로 변경되었습니다.',
     });
   } catch (error) {
     next(error);
   }
 });
 
-// 예약 진행
-sitterMyPageRouter.patch('/:orderId/progress', tokenAuthenticated, async (req, res, next) => {
+
+// 예약 수락 -> 진행
+sitterMyPageRouter.patch('/:orderId/accept', async (req, res, next) => {
   try {
     const orderId = req.params.orderId;
-    await orderService.updateOrderStatus(orderId, 'In Progress');
+    const newState = '진행';
+    await orderService.updateOrderStatus(orderId, newState);
 
     res.status(200).json({
-      message: '예약이 진행되었습니다.',
-    });
-  } catch (error) {
-    next(error);
-  }
-});
-
-// 예약 수락
-sitterMyPageRouter.patch('/:orderId/accept', tokenAuthenticated, async (req, res, next) => {
-  try {
-    const orderId = req.params.orderId;
-    await orderService.updateOrderStatus(orderId, 'Accepted');
-
-    res.status(200).json({
-      message: '예약이 수락되었습니다.',
+      message: '주문 상태가 예약 진행으로 변경되었습니다.',
     });
   } catch (error) {
     next(error);
@@ -50,13 +59,14 @@ sitterMyPageRouter.patch('/:orderId/accept', tokenAuthenticated, async (req, res
 });
 
 // 예약 거절
-sitterMyPageRouter.patch('/:orderId/reject', tokenAuthenticated, async (req, res, next) => {
+sitterMyPageRouter.patch('/:orderId/reject', async (req, res, next) => {
   try {
     const orderId = req.params.orderId;
-    await orderService.updateOrderStatus(orderId, 'Rejected');
+    const newState = '취소';
+    await orderService.updateOrderStatus(orderId, newState);
 
     res.status(200).json({
-      message: '예약이 거절되었습니다.',
+      message: '주문 상태가 예약 취소로 변경되었습니다.',
     });
   } catch (error) {
     next(error);
@@ -64,4 +74,3 @@ sitterMyPageRouter.patch('/:orderId/reject', tokenAuthenticated, async (req, res
 });
 
 export default sitterMyPageRouter;
-

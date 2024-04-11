@@ -24,17 +24,12 @@ class PetSitterService {
   }
 
   // 펫시터 정보 업데이트
-
-  async updatePetSitter(token, updatedInfo) {
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(token, key);
-    const sitterId = decodeToken.sitterId; // 토큰에서 sitterId 추출
-
+  async updatePetSitter(sitterId, updatedInfo) {
     // 패스워드가 전달되었을 경우 해싱
     if (updatedInfo.password) {
       updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
     }
-
+    console.log(updatedInfo);
     return await this.PetSitter.findOneAndUpdate(
       { sitterId: sitterId },
       { $set: updatedInfo },

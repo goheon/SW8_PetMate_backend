@@ -8,7 +8,7 @@ import { userRouter } from './routes/users.js';
 import { booklistRouter } from './routes/booklist.js';
 import { orderSitterRouter } from './routes/ordersitter.js';
 import { sitterMyPageRouter } from './routes/sittermypage.js';
-
+import bodyParser from 'body-parser';
 import mongoose from "mongoose";
 
 import errorMiddleware from './middlewares/errorMiddleware.js';
@@ -30,7 +30,7 @@ app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
-  }))
+}))
 
 //mongoose, mongodb 연결
 async function connectToMongoDB() {
@@ -49,6 +49,8 @@ connectToMongoDB();
 //미들웨어
 app.use(errorMiddleware);
 app.use(cookieParser());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 //페이지 api
 
@@ -64,5 +66,7 @@ app.use('/sitterpage', sitterMyPageRouter);
 app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);
 });
+
+
 
 
