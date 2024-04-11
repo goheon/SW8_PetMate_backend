@@ -1,4 +1,6 @@
 import { PetSitter } from '../db/index.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 class PetSitterService {
   constructor() {
@@ -13,6 +15,7 @@ class PetSitterService {
   // 특정 펫시터 조회
   async getPetSitterById(sitterId) {
     const petSitter = await this.PetSitter.findOne({ sitterId: sitterId });
+
     return petSitter;
   }
 
@@ -22,20 +25,35 @@ class PetSitterService {
   }
 
   // 펫시터 정보 업데이트
-  async updatePetSitter(sitterId, updatedInfo) {
+  async updatePetSitter(sitterId, updatedInfo, uploadimg) {
+    const { userId, type, phone, introduction, experience, hourlyRate, title } = updatedInfo;
+    const parsedHourlyRate = JSON.parse(hourlyRate);
+
+    console.log(updatedInfo);
+    // return updatedInfo;
     return await this.PetSitter.findOneAndUpdate(
       { sitterId: sitterId },
-      { $set: updatedInfo },
+      {
+        sitterId,
+        userId,
+        image: uploadimg,
+        type,
+        phone,
+        introduction,
+        experience,
+        hourlyRate: parsedHourlyRate,
+        title,
+      },
       { new: true }
     );
   }
+
 
   // 펫시터 삭제
   async deletePetSitter(sitterId) {
     return await this.PetSitter.deleteOne({ sitterId: sitterId });
   }
-
-
 }
 
 export default new PetSitterService();
+
