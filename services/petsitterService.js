@@ -15,6 +15,7 @@ class PetSitterService {
   // 특정 펫시터 조회
   async getPetSitterById(sitterId) {
     const petSitter = await this.PetSitter.findOne({ sitterId: sitterId });
+
     return petSitter;
   }
 
@@ -24,15 +25,25 @@ class PetSitterService {
   }
 
   // 펫시터 정보 업데이트
-  async updatePetSitter(sitterId, updatedInfo) {
-    // 패스워드가 전달되었을 경우 해싱
-    if (updatedInfo.password) {
-      updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
-    }
+  async updatePetSitter(sitterId, updatedInfo, uploadimg) {
+    const { userId, type, phone, introduction, experience, hourlyRate, title } = updatedInfo;
+    const parsedHourlyRate = JSON.parse(hourlyRate);
+
     console.log(updatedInfo);
+    // return updatedInfo;
     return await this.PetSitter.findOneAndUpdate(
       { sitterId: sitterId },
-      { $set: updatedInfo },
+      {
+        sitterId,
+        userId,
+        image: uploadimg,
+        type,
+        phone,
+        introduction,
+        experience,
+        hourlyRate: parsedHourlyRate,
+        title,
+      },
       { new: true }
     );
   }

@@ -4,14 +4,20 @@ import orderService from '../services/orderService.js';
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 
 export const sitterMyPageRouter = express.Router();
+import { uploadFiles } from '../middlewares/imageMiddleware.js';
+
 
 // 펫시터 정보 수정
-sitterMyPageRouter.put('/:sitterId', async (req, res, next) => {
+sitterMyPageRouter.put('/:sitterId', uploadFiles.fields([{ name: 'img', maxCount: 3 }]), async (req, res, next) => {
   try {
     const sitterId = req.params.sitterId;
-    const sitterInfo = req;
-    const updatedPetSitter = await petSitterService.updatePetSitter(sitterId, sitterInfo);
+    const sitterInfo = req.body;
+    const uploadFiles = req.files['img'];
+    const uploadimg = uploadFiles ? uploadFiles.map(file => file.path) : ["public/images/default.jpg"];
+    const updatedPetSitter = await petSitterService.updatePetSitter(sitterId, sitterInfo, uploadimg);
+
     console.log(sitterId, sitterInfo);
+
 
     if (sitterId === null) {
       return res.status(404).json({ message: '일치하는 펫시터가 없습니다.' });
