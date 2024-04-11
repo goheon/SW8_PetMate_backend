@@ -18,7 +18,7 @@ const orderSchema = new Schema({
   },
   pets: [{
     type: { type: String, required: true },
-    size: { type: String, required: true }
+    count: { type: Number, required: true }
   }],
   totalPrice: {
     type: Number,

@@ -1,16 +1,14 @@
 import mongoose from "mongoose";
-import shortId from "./types/shortId.js";
+
 const {Schema}=mongoose;
 
 const reviewSchema=new Schema({
     userId:{
         type:String,
-        ...shortId,
         required: true
     },
     sitterId:{
         type:String,
-        ...shortId,
         required: true
     },
     comment:{
@@ -20,6 +18,10 @@ const reviewSchema=new Schema({
     image:{
         type: String,
         required: true,
+    },
+    rate:{
+        type: Number,
+        required:true 
     }
 })
 
