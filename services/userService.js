@@ -9,22 +9,11 @@ class UserService {
     this.User = User;
   }
 
-  //이메일 중복 검사
-  async duplicationCheck(email) {
-    const joinuser = await this.User.findOne({ email: email });
-
-    if (joinuser === null || joinuser === undefined) {
-      return;
-    } else {
-      throw new Error('이미 가입된 사용자입니다.')
-    }
-  }
-
   // 회원정보 조회
   async getUserInfo(token) {
     const key = process.env.SECRET_KEY;
     const decodeToken = jwt.verify(token, key);
-
+    
     const userId = decodeToken.userId
     const userInfo = await this.User.findOne({ userId: userId });
     if (userInfo) {
@@ -37,12 +26,19 @@ class UserService {
   }
 
 
-  // 회원가입
-  async createUser(info) {
-    const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
-    const hashedPassword = await bcrypt.hash(password, 10);
+// 회원가입
+async createUser(info) {
+  const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
+  
+  // 이메일 중복 검사
+  const joinuser = await this.User.findOne({ email: email });
+  if (joinuser) {
+      throw new Error('이미 가입된 사용자입니다.');
+  }
 
-    await User.create({
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await User.create({
       userId,
       username,
       email,
@@ -51,8 +47,9 @@ class UserService {
       address,
       detailAddress,
       isRole,
-    });
-  }
+  });
+}
+
 
   // 회원 정보 수정
   async updateUserInfo(token, updatedInfo) {
@@ -103,7 +100,6 @@ class UserService {
       const { sitterId, type, phone, introduction, experience, hourlyRate, title } = body;
 
       const parsedHourlyRate = JSON.parse(hourlyRate);
-      const parsedType = JSON.parse(type);
 
       if (user.isRole === "1") {
         return { success: false, message: '이미 펫시터 계정입니다.' };
@@ -113,13 +109,12 @@ class UserService {
         sitterId,
         userId,
         image: uploadimg,
-        type: parsedType,
+        type,
         phone,
         introduction,
         experience,
         hourlyRate: parsedHourlyRate,
         title,
-        isRole: "1"
       });
 
       await User.findOneAndUpdate(
@@ -135,7 +130,7 @@ class UserService {
   }
 
   // 로그인 시 이메일로 사용자 데이터 조회
-  async getUserToken(email, password) {
+  async validlogin(email, password) {
     const user = await User.findOne({ email });
 
     //soft delete된 사용자인지 확인

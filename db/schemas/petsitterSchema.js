@@ -36,13 +36,9 @@ const petsitterSchema = new Schema({
     type: [String],
     default: "public/images/default.png"
   },
-  type: [{
-    animal:{type: String, required:true},
-    size: {type:String, required:true}
-  }],
-  isRole: {
-    type: String,
-    required:true 
+  type: {
+    type: [String],
+    required: true,
   }
 })
 
