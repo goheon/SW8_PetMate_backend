@@ -1,6 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/users.js';
@@ -27,7 +28,10 @@ const db_pw = process.env.DB_PW;
 // Create http server
 const app = express();
 app.use(express.json());
-
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true,
+  }))
 
 //mongoose, mongodb 연결
 async function connectToMongoDB() {
