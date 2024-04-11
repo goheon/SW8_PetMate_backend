@@ -25,7 +25,12 @@ class OrderService {
 
   // 특정 사용자의 주문 목록 조회
   async getOrderListOfUser(userId) {
-    return await this.Order.find({ userId: userId });
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(userId, key);
+    const userId1 = decodeToken.userId;
+    console.log(userId1);
+    return await this.Order.find({ userId: userId1 });
+
   }
 
   // 주문 추가
@@ -74,6 +79,16 @@ class OrderService {
       { new: true }
     );
   }
+  // 주문 상태 변경
+  async updateOrderStatus(orderId, state) {
+    return await this.Order.findOneAndUpdate(
+      { orderId: orderId },
+      { $set: { state: state } },
+      { new: true }
+    );
+  }
 }
 
+
 export default new OrderService();
+
