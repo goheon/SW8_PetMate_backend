@@ -7,12 +7,11 @@ import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/users.js';
 import { booklistRouter } from './routes/booklist.js';
 import { orderSitterRouter } from './routes/ordersitter.js';
-
-
+import { sitterMyPageRouter } from './routes/sittermypage.js';
+import bodyParser from 'body-parser';
 import mongoose from "mongoose";
 
 import errorMiddleware from './middlewares/errorMiddleware.js';
-import completeRouter from './routes/complete.js';
 
 
 dotenv.config();
@@ -28,10 +27,11 @@ const db_pw = process.env.DB_PW;
 // Create http server
 const app = express();
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cors({
   origin: 'http://localhost:3000',
   credentials: true,
-  }))
+}))
 
 //mongoose, mongodb 연결
 async function connectToMongoDB() {
@@ -50,14 +50,16 @@ connectToMongoDB();
 //미들웨어
 app.use(errorMiddleware);
 app.use(cookieParser());
+// app.use(bodyParser.urlencoded({ extended: false }));
+// app.use(bodyParser.json());
 
 //페이지 api
 
 app.use('/', authRouter);
 app.use('/mypage', userRouter);
 app.use('/booklist', booklistRouter);
-app.use('/orderinfo', completeRouter);
 app.use('/orderSitter', orderSitterRouter);
+app.use('/sitterpage', sitterMyPageRouter);
 
 
 
@@ -65,3 +67,7 @@ app.use('/orderSitter', orderSitterRouter);
 app.listen(port, () => {
   console.log(`Server started at http://localhost:${port}`);
 });
+
+
+
+
