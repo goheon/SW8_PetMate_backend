@@ -14,7 +14,7 @@ const reviewSchema=new Schema({
     },
     image:{
         type: String,
-        required: true,
+        required: false,
     },
     starRate:{
         type: Number,

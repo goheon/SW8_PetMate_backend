@@ -7,7 +7,7 @@ class ReviewService {
   }
 
   // 이용후기 작성
-  async writeReview(userId, sitterId, comment, images) {
+  async writeReview(orderId, comment, images) {
     return await this.Review.create({
       user_id: userId,
       sitter_id: sitterId,
