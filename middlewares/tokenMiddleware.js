@@ -14,6 +14,7 @@ export const tokenAuthenticated=(req,res,next)=>{
             return res.send("유효하지 않은 토큰입니다.")
         }
         req.user=user;
+        req.userId=req.user.userId
         next();
     })
 }

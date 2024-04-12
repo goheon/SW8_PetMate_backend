@@ -8,7 +8,7 @@ import { userRouter } from './routes/users.js';
 import { booklistRouter } from './routes/booklist.js';
 import { orderSitterRouter } from './routes/ordersitter.js';
 import { sitterMyPageRouter } from './routes/sittermypage.js';
-import bodyParser from 'body-parser';
+import { reviewRouter } from './routes/review.js';
 import mongoose from "mongoose";
 
 import errorMiddleware from './middlewares/errorMiddleware.js';
@@ -50,8 +50,6 @@ connectToMongoDB();
 //미들웨어
 app.use(errorMiddleware);
 app.use(cookieParser());
-// app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(bodyParser.json());
 
 //페이지 api
 
@@ -60,7 +58,7 @@ app.use('/mypage', userRouter);
 app.use('/booklist', booklistRouter);
 app.use('/orderSitter', orderSitterRouter);
 app.use('/sitterpage', sitterMyPageRouter);
-
+app.use('/booklist/review',reviewRouter);
 
 
 // Start http server
