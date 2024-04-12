@@ -1,5 +1,5 @@
 import express from 'express';
-import reviewService from "../services/reviewService.js";
+// import reviewService from "../services/reviewService.js";
 import orderService from "../services/orderService.js";
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 
@@ -26,12 +26,12 @@ booklistRouter.get('/', tokenAuthenticated, async (req, res, next) => {
 });
 
 // 리뷰 작성
-booklistRouter.post('/review', tokenAuthenticated, uploadFiles.fields([{ name: 'img', maxCount: 3 }]), async (req, res, next) => {
-  try {
-    const orderId=req.params.orderId;
-    const uploadFiles = req.files['img'];
-    const result = await reviewService.writeReview(orderId, req.body, uploadFiles)
+// booklistRouter.post('/review', tokenAuthenticated, uploadFiles.fields([{ name: 'img', maxCount: 3 }]), async (req, res, next) => {
+//   try {
+//     const orderId=req.params.orderId;
+//     const uploadFiles = req.files['img'];
+//     const result = await reviewService.writeReview(orderId, req.body, uploadFiles)
 
 
-  }catch{}
-})
+//   }catch{}
+// })

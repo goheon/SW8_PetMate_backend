@@ -10,11 +10,7 @@ class UserService {
   }
 
   // 회원정보 조회
-  async getUserInfo(token) {
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(token, key);
-    
-    const userId = decodeToken.userId
+  async getUserInfo(userId) {
     const userInfo = await this.User.findOne({ userId: userId });
     if (userInfo) {
       return userInfo;
@@ -52,11 +48,7 @@ async createUser(info) {
 
 
   // 회원 정보 수정
-  async updateUserInfo(token, updatedInfo) {
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(token, key);
-
-    const userId = decodeToken.userId;
+  async updateUserInfo(userId, updatedInfo) {
 
     // 패스워드가 전달되었을 경우 해싱
     if (updatedInfo.password) {
@@ -71,12 +63,7 @@ async createUser(info) {
   }
 
   //회원탈퇴
-  async deleteUser(token) {
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(token, key);
-
-    const userId = decodeToken.userId
-
+  async deleteUser(userId) {
     //이메일과 일치하는 user softDelete
     const user = await User.findOne({ userId })
 
@@ -88,12 +75,8 @@ async createUser(info) {
   }
 
   //펫시터 등록
-  async registerSitter(token, body, uploadimg) {
+  async registerSitter(userId, body, uploadimg) {
     try {
-      const key = process.env.SECRET_KEY;
-      const decodeToken = jwt.verify(token, key);
-
-      const userId = decodeToken.userId;
 
       const user = await User.findOne({ userId });
 
