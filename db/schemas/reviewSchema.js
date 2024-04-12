@@ -1,16 +1,11 @@
 import mongoose from "mongoose";
-import shortId from "./types/shortId";
+
 const {Schema}=mongoose;
 
 const reviewSchema=new Schema({
-    userId:{
+    //게시글을 구별 할 수 있는 key값? orderId/ createdAt/ reviewId
+    orderId:{
         type:String,
-        ...shortId,
-        required: true
-    },
-    sitterId:{
-        type:String,
-        ...shortId,
         required: true
     },
     comment:{
@@ -20,7 +15,12 @@ const reviewSchema=new Schema({
     image:{
         type: String,
         required: true,
+    },
+    starRate:{
+        type: Number,
+        required:true 
     }
+
 })
 
 export default reviewSchema;

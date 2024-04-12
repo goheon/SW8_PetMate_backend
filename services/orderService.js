@@ -1,4 +1,5 @@
-const Order = require('../db/index.js');
+import { Order } from '../db/index.js';
+import jwt from 'jsonwebtoken';
 
 class OrderService {
   constructor() {
@@ -24,24 +25,36 @@ class OrderService {
 
   // 특정 사용자의 주문 목록 조회
   async getOrderListOfUser(userId) {
-    return await this.Order.find({ userId: userId });
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(userId, key);
+    const userId1 = decodeToken.userId;
+    console.log(userId1);
+    return await this.Order.find({ userId: userId1 });
+
   }
 
   // 주문 추가
-  async addOrder(orderInfo) {
-    const { orderId, userId, sitterId, pets, totalPrice, createdAt, state, detailInfo, start, end } = orderInfo;
-    return await this.Order.create({
+  async addOrder(sitterId, orderInfo, token) {
+    const { orderId, pets, totalPrice, detailInfo, startDate, endDate } = orderInfo;
+    const currentDate = new Date().toISOString();
+
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(token, key);
+    const userId = decodeToken.userId;
+
+    const newOrder= await this.Order.create({
       orderId,
       userId,
       sitterId,
       pets,
       totalPrice,
-      createdAt,
-      state,
+      createdAt: currentDate,
+      state: "예약요청",
       detailInfo,
-      start,
-      end
+      startDate,
+      endDate
     });
+    return { success: true, message: '예약완료!', orderId: newOrder.orderId };
   }
 
   // 주문 수정
@@ -57,6 +70,25 @@ class OrderService {
   async cancelOrder(orderId) {
     return await this.Order.deleteOne({ orderId: orderId });
   }
+
+  // 주문 완료
+  async completeOrder(userId, orderId) {
+    return await this.Order.findOneAndUpdate(
+      { userId: userId, orderId: orderId },
+      { $set: { state: '완료' } },
+      { new: true }
+    );
+  }
+  // 주문 상태 변경
+  async updateOrderStatus(orderId, state) {
+    return await this.Order.findOneAndUpdate(
+      { orderId: orderId },
+      { $set: { state: state } },
+      { new: true }
+    );
+  }
 }
 
-module.exports = new OrderService();
+
+export default new OrderService();
+
