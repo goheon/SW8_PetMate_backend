@@ -1,5 +1,5 @@
 // 불러오기
-const Review = require('../db/index.js');
+import { Review } from "../db/index.js";
 
 class ReviewService {
   constructor() {

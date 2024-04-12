@@ -1,6 +1,8 @@
-import { User } from "./db/index.js";
+import { User } from '../db/index.js';
+import { PetSitter } from '../db/index.js';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import mongoose from 'mongoose';
 
 class UserService {
   constructor() {
@@ -8,7 +10,11 @@ class UserService {
   }
 
   // 회원정보 조회
-  async getUserInfo(userId) {
+  async getUserInfo(token) {
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(token, key);
+    
+    const userId = decodeToken.userId
     const userInfo = await this.User.findOne({ userId: userId });
     if (userInfo) {
       return userInfo;
@@ -19,13 +25,21 @@ class UserService {
     }
   }
 
-  // 회원가입
-  async createUser(info) {
-    const { username, email, password, phone, address, detailAddress, isRole } = info;
-    const hashedPassword = await bcrypt.hash(password, 10);
 
-    await User.create({
-      userId: username,
+// 회원가입
+async createUser(info) {
+  const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
+  
+  // 이메일 중복 검사
+  const joinuser = await this.User.findOne({ email: email });
+  if (joinuser) {
+      throw new Error('이미 가입된 사용자입니다.');
+  }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  await User.create({
+      userId,
       username,
       email,
       password: hashedPassword,
@@ -33,14 +47,22 @@ class UserService {
       address,
       detailAddress,
       isRole,
-    });
-  }
+  });
+}
 
-  //회원정보 수정
-  async updateUserInfo(userId, updatedInfo) {
+
+  // 회원 정보 수정
+  async updateUserInfo(token, updatedInfo) {
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(token, key);
+
+    const userId = decodeToken.userId;
+
+    // 패스워드가 전달되었을 경우 해싱
     if (updatedInfo.password) {
       updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
     }
+
     return await User.findOneAndUpdate(
       { userId: userId },
       { $set: updatedInfo },
@@ -49,41 +71,82 @@ class UserService {
   }
 
   //회원탈퇴
-  async deleteUser(userId) {
-    return await User.findOneAndDelete({ userId: userId });
+  async deleteUser(token) {
+    const key = process.env.SECRET_KEY;
+    const decodeToken = jwt.verify(token, key);
+
+    const userId = decodeToken.userId
+
+    //이메일과 일치하는 user softDelete
+    const user = await User.findOne({ userId })
+
+    if (user) {
+      user.deletedAt = new Date();
+      await user.save();
+      return
+    }
+  }
+
+  //펫시터 등록
+  async registerSitter(token, body, uploadimg) {
+    try {
+      const key = process.env.SECRET_KEY;
+      const decodeToken = jwt.verify(token, key);
+
+      const userId = decodeToken.userId;
+
+      const user = await User.findOne({ userId });
+
+      const { sitterId, type, phone, introduction, experience, hourlyRate, title } = body;
+
+      const parsedHourlyRate = JSON.parse(hourlyRate);
+
+      if (user.isRole === "1") {
+        return { success: false, message: '이미 펫시터 계정입니다.' };
+      }
+
+      const newSitter = await PetSitter.create({
+        sitterId,
+        userId,
+        image: uploadimg,
+        type,
+        phone,
+        introduction,
+        experience,
+        hourlyRate: parsedHourlyRate,
+        title,
+      });
+
+      await User.findOneAndUpdate(
+        { userId: userId },
+        { isRole: "1" },
+        { new: true } //업데이트된 정보 반환
+      );
+
+      return { success: true, message: '펫시터 등록 완료!', sitterId: newSitter.sitterId };
+    } catch (error) {
+      throw error;
+    }
   }
 
   // 로그인 시 이메일로 사용자 데이터 조회
-  async getUserToken(userId, userPw) {
-    const userData = await User.findOne({ userId: userId });
+  async validlogin(email, password) {
+    const user = await User.findOne({ email });
 
-    if (!userData) {
-      const e = new Error('올바르지 않은 ID');
-      e.status = 404;
-      throw e;
+    //soft delete된 사용자인지 확인
+    if (user) {
+      if (user.deletedAt) {
+        throw new Error("탈퇴한 회원입니다.")
+      }
     }
 
-    const comparePassword = await this.comparePasswords(
-      userPw,
-      userData.password
-    );
-
-    if (!comparePassword) {
-      const e = new Error('올바르지 않은 비밀번호');
-      e.status = 404;
-      throw e;
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      throw new Error("인증 실패")
     }
-
-    const secretKey = process.env.JWT_SECRET_KEY;
-    return jwt.sign({
-      userId: userData.userId,
-      isRole: userData.isRole,
-    }, secretKey);
+    return user;
   }
 
-  async comparePasswords(inputPassword, hashedPassword) {
-    return bcrypt.compare(inputPassword, hashedPassword);
-  }
 }
 
 export default new UserService();
