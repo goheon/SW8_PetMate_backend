@@ -15,7 +15,7 @@ class UserService {
     if (userInfo) {
       return userInfo;
     }
-    throw new customError(404, '존재하지 않는 사용자 입니다.');
+    throw new customError('존재하지 않는 사용자 입니다.', 404);
   }
 
   // 회원가입
@@ -25,7 +25,7 @@ class UserService {
     // 이메일 중복 검사
     const joinuser = await this.User.findOne({ email: email });
     if (joinuser) {
-      throw new customError(400, '이미 가입된 사용자입니다.');
+      throw new customError('이미 가입된 사용자입니다.', 400);
     }
 
     await User.create({
@@ -101,12 +101,12 @@ class UserService {
     //soft delete된 사용자인지 확인
     if (user) {
       if (user.deletedAt) {
-        throw new customError(400, '탈퇴한 회원입니다.');
+        throw new customError('탈퇴한 회원입니다.', 400);
       }
     }
 
     if (password !== user.password) {
-      throw new customError(401, '비밀번호가 틀렸습니다.');
+      throw new customError('비밀번호가 틀렸습니다.', 401);
     }
     return user;
   }

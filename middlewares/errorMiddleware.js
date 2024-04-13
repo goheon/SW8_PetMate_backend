@@ -3,10 +3,7 @@ export default (err, req, res, next) => {
 };
 
 export class customError extends Error {
-  constructor(statusCode, message) {
-    // if (statusCode === undefined) {
-    //   this.statusCode = 500;
-    // }
+  constructor(message, statusCode = 500) {
     super(message);
     this.statusCode = statusCode;
   }
