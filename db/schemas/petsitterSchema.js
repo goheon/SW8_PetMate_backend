@@ -1,5 +1,5 @@
 import mongoose from 'mongoose';
-import shortId from './types/shortId.js'; 
+import shortId from './types/shortId.js';
 const { Schema } = mongoose;
 
 const petsitterSchema = new Schema({
@@ -12,9 +12,9 @@ const petsitterSchema = new Schema({
     type: String,
     required: true,
   },
-  phone:{
-    type:Number,
-    required:true,
+  phone: {
+    type: Number,
+    required: true,
   },
   title: {
     type: String,
@@ -28,18 +28,18 @@ const petsitterSchema = new Schema({
     type: String,
     required: true,
   },
-  hourlyRate: [{
-    size:{type: String, required:true},
-    rate:{type:Number, required:true}
-  }],
+  hourlyRate: {
+    type: Object,
+    required: true,
+  },
   image: {
     type: [String],
-    default: "public/images/default.png"
+    default: 'public/images/default.png',
   },
   type: {
     type: [String],
     required: true,
-  }
-})
+  },
+});
 
 export default petsitterSchema;
