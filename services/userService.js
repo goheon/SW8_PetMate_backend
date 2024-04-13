@@ -1,7 +1,6 @@
 import { User } from '../db/index.js';
 import { PetSitter } from '../db/index.js';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
 
 class UserService {
@@ -31,13 +30,11 @@ class UserService {
       throw new Error('이미 가입된 사용자입니다.');
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     await User.create({
       userId,
       username,
       email,
-      password: hashedPassword,
+      password,
       phone,
       address,
       detailAddress,
@@ -47,11 +44,6 @@ class UserService {
 
   // 회원 정보 수정
   async updateUserInfo(userId, updatedInfo) {
-    // 패스워드가 전달되었을 경우 해싱
-    if (updatedInfo.password) {
-      updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
-    }
-
     return await User.findOneAndUpdate({ userId: userId }, { $set: updatedInfo }, { new: true });
   }
 
@@ -115,8 +107,7 @@ class UserService {
       }
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
+    if (password !== user.password) {
       throw new Error('인증 실패');
     }
     return user;
