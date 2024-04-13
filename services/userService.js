@@ -2,6 +2,7 @@ import { User } from '../db/index.js';
 import { PetSitter } from '../db/index.js';
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
+import { customError } from '../middlewares/errorMiddleware.js';
 
 class UserService {
   constructor() {
@@ -13,11 +14,8 @@ class UserService {
     const userInfo = await this.User.findOne({ userId: userId });
     if (userInfo) {
       return userInfo;
-    } else {
-      const e = new Error('존재하지 않는 사용자 아이디입니다.');
-      e.status = 404;
-      throw e;
     }
+    throw new customError('존재하지 않는 사용자 입니다.', 404);
   }
 
   // 회원가입
@@ -27,7 +25,7 @@ class UserService {
     // 이메일 중복 검사
     const joinuser = await this.User.findOne({ email: email });
     if (joinuser) {
-      throw new Error('이미 가입된 사용자입니다.');
+      throw new customError('이미 가입된 사용자입니다.', 400);
     }
 
     await User.create({
@@ -103,12 +101,12 @@ class UserService {
     //soft delete된 사용자인지 확인
     if (user) {
       if (user.deletedAt) {
-        throw new Error('탈퇴한 회원입니다.');
+        throw new customError('탈퇴한 회원입니다.', 400);
       }
     }
 
     if (password !== user.password) {
-      throw new Error('인증 실패');
+      throw new customError('비밀번호가 틀렸습니다.', 401);
     }
     return user;
   }
