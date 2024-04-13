@@ -21,20 +21,19 @@ class UserService {
     }
   }
 
+  // 회원가입
+  async createUser(info) {
+    const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
 
-// 회원가입
-async createUser(info) {
-  const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
-  
-  // 이메일 중복 검사
-  const joinuser = await this.User.findOne({ email: email });
-  if (joinuser) {
+    // 이메일 중복 검사
+    const joinuser = await this.User.findOne({ email: email });
+    if (joinuser) {
       throw new Error('이미 가입된 사용자입니다.');
-  }
+    }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  await User.create({
+    await User.create({
       userId,
       username,
       email,
@@ -43,48 +42,41 @@ async createUser(info) {
       address,
       detailAddress,
       isRole,
-  });
-}
-
+    });
+  }
 
   // 회원 정보 수정
   async updateUserInfo(userId, updatedInfo) {
-
     // 패스워드가 전달되었을 경우 해싱
     if (updatedInfo.password) {
       updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
     }
 
-    return await User.findOneAndUpdate(
-      { userId: userId },
-      { $set: updatedInfo },
-      { new: true }
-    );
+    return await User.findOneAndUpdate({ userId: userId }, { $set: updatedInfo }, { new: true });
   }
 
   //회원탈퇴
   async deleteUser(userId) {
     //이메일과 일치하는 user softDelete
-    const user = await User.findOne({ userId })
+    const user = await User.findOne({ userId });
 
     if (user) {
       user.deletedAt = new Date();
       await user.save();
-      return
+      return;
     }
   }
 
   //펫시터 등록
   async registerSitter(userId, body, uploadimg) {
     try {
-
       const user = await User.findOne({ userId });
 
       const { sitterId, type, phone, introduction, experience, hourlyRate, title } = body;
 
       const parsedHourlyRate = JSON.parse(hourlyRate);
 
-      if (user.isRole === "1") {
+      if (user.isRole === '1') {
         return { success: false, message: '이미 펫시터 계정입니다.' };
       }
 
@@ -102,8 +94,8 @@ async createUser(info) {
 
       await User.findOneAndUpdate(
         { userId: userId },
-        { isRole: "1" },
-        { new: true } //업데이트된 정보 반환
+        { isRole: '1' },
+        { new: true }, //업데이트된 정보 반환
       );
 
       return { success: true, message: '펫시터 등록 완료!', sitterId: newSitter.sitterId };
@@ -119,17 +111,16 @@ async createUser(info) {
     //soft delete된 사용자인지 확인
     if (user) {
       if (user.deletedAt) {
-        throw new Error("탈퇴한 회원입니다.")
+        throw new Error('탈퇴한 회원입니다.');
       }
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
     if (!isValidPassword) {
-      throw new Error("인증 실패")
+      throw new Error('인증 실패');
     }
     return user;
   }
-
 }
 
 export default new UserService();
