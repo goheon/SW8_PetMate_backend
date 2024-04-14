@@ -30,24 +30,26 @@ class PetSitterService {
     const parsedHourlyRate = JSON.parse(hourlyRate);
 
     console.log(updatedInfo);
-    // return updatedInfo;
+    const typeArr = updatedInfo.type.split(',');
+    const experienceArr = updatedInfo.experience.split(',');
+    console.log(typeArr, experienceArr);
+
     return await this.PetSitter.findOneAndUpdate(
       { sitterId: sitterId },
       {
         sitterId,
         userId,
         image: uploadimg,
-        type,
+        type: typeArr,
         phone,
         introduction,
-        experience,
+        experience: experienceArr,
         hourlyRate: parsedHourlyRate,
         title,
       },
-      { new: true }
+      { new: true },
     );
   }
-
 
   // 펫시터 삭제
   async deletePetSitter(sitterId) {
@@ -56,4 +58,3 @@ class PetSitterService {
 }
 
 export default new PetSitterService();
-

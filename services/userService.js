@@ -70,14 +70,17 @@ class UserService {
         return { success: false, message: '이미 펫시터 계정입니다.' };
       }
 
+      const typeArr = type.split(',');
+      const experienceArr = experience.split(',');
+
       const newSitter = await PetSitter.create({
         sitterId,
         userId,
         image: uploadimg,
-        type,
+        type: typeArr,
         phone,
         introduction,
-        experience,
+        experience: experienceArr,
         hourlyRate: parsedHourlyRate,
         title,
       });

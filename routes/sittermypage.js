@@ -6,6 +6,21 @@ import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 export const sitterMyPageRouter = express.Router();
 import { uploadFiles } from '../middlewares/imageMiddleware.js';
 
+//유저Id를 통한 펫시터 정보 조회
+sitterMyPageRouter.get('/:userId', tokenAuthenticated, async (req, res, next) => {
+  try {
+    const userId = req.params.userId;
+    const detailInfo = await petSitterService.getPetSitterByUserId(userId);
+
+    if (detailInfo === null) {
+      return res.status(404).json({ message: '해당하는 펫시터를 찾을 수 없습니다.' });
+    } else {
+      res.status(200).json(detailInfo);
+    }
+  } catch (error) {
+    next(error);
+  }
+});
 
 // 펫시터 정보 수정
 sitterMyPageRouter.put('/:sitterId', uploadFiles.fields([{ name: 'img', maxCount: 3 }]), async (req, res, next) => {
@@ -13,11 +28,10 @@ sitterMyPageRouter.put('/:sitterId', uploadFiles.fields([{ name: 'img', maxCount
     const sitterId = req.params.sitterId;
     const sitterInfo = req.body;
     const uploadFiles = req.files['img'];
-    const uploadimg = uploadFiles ? uploadFiles.map(file => file.path) : ["public/images/default.jpg"];
+    const uploadimg = uploadFiles ? uploadFiles.map((file) => file.path) : ['public/images/default.jpg'];
     const updatedPetSitter = await petSitterService.updatePetSitter(sitterId, sitterInfo, uploadimg);
 
     console.log(sitterId, sitterInfo);
-
 
     if (sitterId === null) {
       return res.status(404).json({ message: '일치하는 펫시터가 없습니다.' });
@@ -26,8 +40,7 @@ sitterMyPageRouter.put('/:sitterId', uploadFiles.fields([{ name: 'img', maxCount
         message: '펫시터 정보가 수정되었습니다.',
         data: updatedPetSitter,
       });
-    };
-
+    }
   } catch (error) {
     next(error);
   }
@@ -47,7 +60,6 @@ sitterMyPageRouter.patch('/:orderId/progress', async (req, res, next) => {
     next(error);
   }
 });
-
 
 // 예약 수락 -> 진행
 sitterMyPageRouter.patch('/:orderId/accept', async (req, res, next) => {
