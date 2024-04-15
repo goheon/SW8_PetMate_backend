@@ -95,7 +95,7 @@ sitterMyPageRouter.patch('/:orderId/reject', async (req, res, next) => {
 sitterMyPageRouter.get('/orderlist/:sitterId', async (req, res, next) => {
   try {
     const sitterId = req.params.sitterId;
-    const result = petSitterService.sitterOrderList(sitterId);
+    const result = await petSitterService.sitterOrderList(sitterId);
 
     res.status(200).json(result);
   } catch (error) {
