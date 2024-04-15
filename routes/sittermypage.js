@@ -64,7 +64,7 @@ sitterMyPageRouter.patch('/:orderId/progress', async (req, res, next) => {
 sitterMyPageRouter.patch('/:orderId/accept', async (req, res, next) => {
   try {
     const orderId = req.params.orderId;
-    const newState = '진행';
+    const newState = '진행중';
     await orderService.updateOrderStatus(orderId, newState);
 
     res.status(200).json({
