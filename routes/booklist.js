@@ -10,12 +10,11 @@ export const booklistRouter = express.Router();
 booklistRouter.get('/', tokenAuthenticated, async (req, res, next) => {
   try {
     const orders = await orderService.getOrderListOfUser(req.userId);
-
     const ordersWithSitterInfo = await Promise.all(
       orders.map(async (order) => {
         const userInfo = await userService.getUserInfo(order.userId);
         const petSitterInfo = await petsitterService.getPetSitterById(order.sitterId);
-        const petSitterUserInfo = await userService.getUserInfo(petSitterInfo.userId);
+        const petSitterUserInfo = await userService.getUserInfo(petSitterInfo.sitterInfo.userId);
 
         const userphone = userInfo.phone;
         const useraddress = userInfo.address;

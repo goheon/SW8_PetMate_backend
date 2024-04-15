@@ -100,7 +100,7 @@ sitterMyPageRouter.get('/orderlist/:sitterId', async (req, res, next) => {
       result.map(async (order) => {
         const userInfo = await userService.getUserInfo(order.userId);
         const petSitterInfo = await petSitterService.getPetSitterById(order.sitterId);
-        const petSitterUserInfo = await userService.getUserInfo(petSitterInfo.userId);
+        const petSitterUserInfo = await userService.getUserInfo(petSitterInfo.sitterInfo.userId);
 
         const userphone = userInfo.phone;
         const useraddress = userInfo.address;
