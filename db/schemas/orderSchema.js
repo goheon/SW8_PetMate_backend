@@ -16,10 +16,12 @@ const orderSchema = new Schema({
     type: String,
     required: true,
   },
-  pets: [{
-    type: { type: String, required: true },
-    count: { type: Number, required: true }
-  }],
+  pets: [
+    {
+      type: { type: String, required: true },
+      count: { type: Number, required: true },
+    },
+  ],
   totalPrice: {
     type: Number,
     required: true,
@@ -30,7 +32,7 @@ const orderSchema = new Schema({
   },
   state: {
     type: String,
-    default: "예약요청",
+    default: '예약요청',
   },
   detailInfo: {
     type: String,
@@ -43,8 +45,11 @@ const orderSchema = new Schema({
   endDate: {
     type: Date,
     required: true,
-  }
-
-})
+  },
+  reviewWritten: {
+    type: String,
+    default: undefined,
+  },
+});
 
 export default orderSchema;

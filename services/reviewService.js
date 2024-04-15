@@ -26,6 +26,12 @@ class ReviewService {
     const searchname = await this.User.findOne({ userId: searchuserId });
     const username = searchname.username;
 
+    await this.Order.findOneAndUpdate(
+      { orderId: orderId },
+      { reviewWritten: '1' },
+      { new: true }, //업데이트된 정보 반환
+    );
+
     return await this.Review.create({
       orderId,
       userId: searchuserId,
