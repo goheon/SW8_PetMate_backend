@@ -10,18 +10,32 @@ export const booklistRouter = express.Router();
 booklistRouter.get('/', tokenAuthenticated, async (req, res, next) => {
   try {
     const orders = await orderService.getOrderListOfUser(req.userId);
-
     const ordersWithSitterInfo = await Promise.all(
       orders.map(async (order) => {
+        const userInfo = await userService.getUserInfo(order.userId);
         const petSitterInfo = await petsitterService.getPetSitterById(order.sitterId);
-        const userInfo = await userService.getUserInfo(petSitterInfo.userId);
+        const petSitterUserInfo = await userService.getUserInfo(petSitterInfo.sitterInfo.userId);
 
-        const sitterphone = userInfo.phone;
-        const sitteraddress = userInfo.address;
-        const sittername = userInfo.username;
+        const userphone = userInfo.phone;
+        const useraddress = userInfo.address;
+        const userdetailaddress = userInfo.detailAddress;
+        const username = userInfo.username;
+        const sitterphone = petSitterUserInfo.phone;
+        const sitteraddress = petSitterUserInfo.address;
+        const sittername = petSitterUserInfo.username;
 
         const orderObj = order.toObject();
-        return { ...orderObj, petSitterInfo, sitterphone, sitteraddress, sittername };
+        return {
+          ...orderObj,
+          petSitterInfo,
+          sitterphone,
+          sitteraddress,
+          sittername,
+          userphone,
+          useraddress,
+          userdetailaddress,
+          username,
+        };
       }),
     );
 

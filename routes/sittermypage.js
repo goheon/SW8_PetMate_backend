@@ -1,17 +1,16 @@
 import express from 'express';
 import petSitterService from '../services/petsitterService.js';
 import orderService from '../services/orderService.js';
+import userService from '../services/userService.js';
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 
 export const sitterMyPageRouter = express.Router();
 import { uploadFiles } from '../middlewares/imageMiddleware.js';
 
-//유저Id를 통한 펫시터 정보 조회
-sitterMyPageRouter.get('/:userId', tokenAuthenticated, async (req, res, next) => {
+//펫시터 정보 조회
+sitterMyPageRouter.get('/', tokenAuthenticated, async (req, res, next) => {
   try {
-    const userId = req.params.userId;
-    const detailInfo = await petSitterService.getPetSitterByUserId(userId);
-
+    const detailInfo = await petSitterService.getPetSitterByUserId(req.userId);
     if (detailInfo === null) {
       return res.status(404).json({ message: '해당하는 펫시터를 찾을 수 없습니다.' });
     } else {
@@ -65,7 +64,7 @@ sitterMyPageRouter.patch('/:orderId/progress', async (req, res, next) => {
 sitterMyPageRouter.patch('/:orderId/accept', async (req, res, next) => {
   try {
     const orderId = req.params.orderId;
-    const newState = '진행';
+    const newState = '진행중';
     await orderService.updateOrderStatus(orderId, newState);
 
     res.status(200).json({
@@ -97,7 +96,42 @@ sitterMyPageRouter.get('/orderlist/:sitterId', async (req, res, next) => {
     const sitterId = req.params.sitterId;
     const result = await petSitterService.sitterOrderList(sitterId);
 
-    res.status(200).json(result);
+    const ordersWithSitterInfo = await Promise.all(
+      result.map(async (order) => {
+        const userInfo = await userService.getUserInfo(order.userId);
+        const petSitterInfo = await petSitterService.getPetSitterById(order.sitterId);
+        const petSitterUserInfo = await userService.getUserInfo(petSitterInfo.sitterInfo.userId);
+
+        const userphone = userInfo.phone;
+        const useraddress = userInfo.address;
+        const userdetailaddress = userInfo.detailAddress;
+        const username = userInfo.username;
+        const sitterphone = petSitterUserInfo.phone;
+        const sitteraddress = petSitterUserInfo.address;
+        const sittername = petSitterUserInfo.username;
+
+        return {
+          ...order,
+          petSitterInfo,
+          sitterphone,
+          sitteraddress,
+          sittername,
+          userphone,
+          useraddress,
+          userdetailaddress,
+          username,
+        };
+      }),
+    );
+
+    if (ordersWithSitterInfo === null) {
+      return res.status(404).json({ message: '전체 예약 내역이 없습니다.' });
+    } else {
+      res.status(200).json({
+        message: '전체 예약 내역 조회가 완료되었습니다.',
+        data: ordersWithSitterInfo,
+      });
+    }
   } catch (error) {
     next(error);
   }
