@@ -14,8 +14,23 @@ class PetSitterService {
 
   // 모든 펫시터 목록 조회
   async getAllPetSitters() {
-    const sitters = await this.PetSitter.find({});
-    return sitters.map((sitter) => sitter.toObject());
+    const findSitters = await this.User.find({ isRole: 1 });
+    const userIds = findSitters.map((user) => user.userId);
+    const sitters = await this.PetSitter.find({ userId: { $in: userIds } });
+
+    const formatSitters = findSitters.map((user) => {
+      const sitter = sitters.find((sitter) => sitter.userId === user.userId);
+      return {
+        name: user.username,
+        address: user.address,
+        sitterId: sitter ? sitter.sitterId : null,
+        title: sitter ? sitter.title : null,
+        type: sitter ? sitter.type : null,
+        hourlyRate: sitter ? sitter.hourlyRate : null,
+      };
+    });
+
+    return formatSitters;
   }
 
   // 특정 펫시터 조회
