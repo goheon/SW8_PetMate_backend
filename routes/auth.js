@@ -34,7 +34,7 @@ authRouter.post('/login',async (req,res,next)=>{
         const {email, password}=req.body;
 
         const user=await userService.validlogin(email,password)
-
+        
         //인증 성공시 토큰 생성
         setUserToken(res,user)
     }catch(error){

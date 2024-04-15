@@ -25,12 +25,7 @@ class OrderService {
 
   // 특정 사용자의 주문 목록 조회
   async getOrderListOfUser(userId) {
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(userId, key);
-    const userId1 = decodeToken.userId;
-    console.log(userId1);
-    return await this.Order.find({ userId: userId1 });
-
+    return await this.Order.find({ userId: userId });
   }
 
   // 주문 추가
@@ -42,28 +37,24 @@ class OrderService {
     const decodeToken = jwt.verify(token, key);
     const userId = decodeToken.userId;
 
-    const newOrder= await this.Order.create({
+    const newOrder = await this.Order.create({
       orderId,
       userId,
       sitterId,
       pets,
       totalPrice,
       createdAt: currentDate,
-      state: "예약요청",
+      state: '예약요청',
       detailInfo,
       startDate,
-      endDate
+      endDate,
     });
     return { success: true, message: '예약완료!', orderId: newOrder.orderId };
   }
 
   // 주문 수정
   async updateOrder(orderId, updatedInfo) {
-    return await this.Order.findOneAndUpdate(
-      { orderId: orderId },
-      { $set: updatedInfo },
-      { new: true }
-    );
+    return await this.Order.findOneAndUpdate({ orderId: orderId }, { $set: updatedInfo }, { new: true });
   }
 
   // 주문 취소
@@ -76,19 +67,13 @@ class OrderService {
     return await this.Order.findOneAndUpdate(
       { userId: userId, orderId: orderId },
       { $set: { state: '완료' } },
-      { new: true }
+      { new: true },
     );
   }
   // 주문 상태 변경
   async updateOrderStatus(orderId, state) {
-    return await this.Order.findOneAndUpdate(
-      { orderId: orderId },
-      { $set: { state: state } },
-      { new: true }
-    );
+    return await this.Order.findOneAndUpdate({ orderId: orderId }, { $set: { state: state } }, { new: true });
   }
 }
 
-
 export default new OrderService();
-

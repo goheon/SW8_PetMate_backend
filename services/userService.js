@@ -1,8 +1,8 @@
 import { User } from '../db/index.js';
 import { PetSitter } from '../db/index.js';
 import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
 import mongoose from 'mongoose';
+import { customError } from '../middlewares/errorMiddleware.js';
 
 class UserService {
   constructor() {
@@ -10,117 +10,85 @@ class UserService {
   }
 
   // 회원정보 조회
-  async getUserInfo(token) {
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(token, key);
-    
-    const userId = decodeToken.userId
+  async getUserInfo(userId) {
     const userInfo = await this.User.findOne({ userId: userId });
     if (userInfo) {
       return userInfo;
-    } else {
-      const e = new Error('존재하지 않는 사용자 아이디입니다.');
-      e.status = 404;
-      throw e;
     }
+    throw new customError('존재하지 않는 사용자 입니다.', 404);
   }
 
+  // 회원가입
+  async createUser(info) {
+    const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
 
-// 회원가입
-async createUser(info) {
-  const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
-  
-  // 이메일 중복 검사
-  const joinuser = await this.User.findOne({ email: email });
-  if (joinuser) {
-      throw new Error('이미 가입된 사용자입니다.');
-  }
+    // 이메일 중복 검사
+    const joinuser = await this.User.findOne({ email: email });
+    if (joinuser) {
+      throw new customError('이미 가입된 사용자입니다.', 400);
+    }
 
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  await User.create({
+    await User.create({
       userId,
       username,
       email,
-      password: hashedPassword,
+      password,
       phone,
       address,
       detailAddress,
       isRole,
-  });
-}
-
+    });
+  }
 
   // 회원 정보 수정
-  async updateUserInfo(token, updatedInfo) {
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(token, key);
-
-    const userId = decodeToken.userId;
-
-    // 패스워드가 전달되었을 경우 해싱
-    if (updatedInfo.password) {
-      updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
-    }
-
-    return await User.findOneAndUpdate(
-      { userId: userId },
-      { $set: updatedInfo },
-      { new: true }
-    );
+  async updateUserInfo(userId, updatedInfo) {
+    return await User.findOneAndUpdate({ userId: userId }, { $set: updatedInfo }, { new: true });
   }
 
   //회원탈퇴
-  async deleteUser(token) {
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(token, key);
-
-    const userId = decodeToken.userId
-
+  async deleteUser(userId) {
     //이메일과 일치하는 user softDelete
-    const user = await User.findOne({ userId })
+    const user = await User.findOne({ userId });
 
     if (user) {
       user.deletedAt = new Date();
       await user.save();
-      return
+      return;
     }
   }
 
   //펫시터 등록
-  async registerSitter(token, body, uploadimg) {
+  async registerSitter(userId, body, uploadimg) {
     try {
-      const key = process.env.SECRET_KEY;
-      const decodeToken = jwt.verify(token, key);
-
-      const userId = decodeToken.userId;
-
       const user = await User.findOne({ userId });
 
       const { sitterId, type, phone, introduction, experience, hourlyRate, title } = body;
 
       const parsedHourlyRate = JSON.parse(hourlyRate);
 
-      if (user.isRole === "1") {
+      if (user.isRole === '1') {
         return { success: false, message: '이미 펫시터 계정입니다.' };
       }
+
+      const typeArr = type.split(',');
+      const experienceArr = experience.split(',');
 
       const newSitter = await PetSitter.create({
         sitterId,
         userId,
         image: uploadimg,
-        type,
+        type: typeArr,
         phone,
         introduction,
-        experience,
+        experience: experienceArr,
         hourlyRate: parsedHourlyRate,
         title,
       });
 
       await User.findOneAndUpdate(
         { userId: userId },
-        { isRole: "1" },
-        { new: true } //업데이트된 정보 반환
+        { isRole: '1' },
+        { new: true }, //업데이트된 정보 반환
       );
 
       return { success: true, message: '펫시터 등록 완료!', sitterId: newSitter.sitterId };
@@ -136,17 +104,15 @@ async createUser(info) {
     //soft delete된 사용자인지 확인
     if (user) {
       if (user.deletedAt) {
-        throw new Error("탈퇴한 회원입니다.")
+        throw new customError('탈퇴한 회원입니다.', 400);
       }
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      throw new Error("인증 실패")
+    if (password !== user.password) {
+      throw new customError('비밀번호가 틀렸습니다.', 401);
     }
     return user;
   }
-
 }
 
 export default new UserService();
