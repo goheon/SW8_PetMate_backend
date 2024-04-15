@@ -10,7 +10,6 @@ import { uploadFiles } from '../middlewares/imageMiddleware.js';
 sitterMyPageRouter.get('/', tokenAuthenticated, async (req, res, next) => {
   try {
     const detailInfo = await petSitterService.getPetSitterByUserId(req.userId);
-    console.log(detailInfo);
     if (detailInfo === null) {
       return res.status(404).json({ message: '해당하는 펫시터를 찾을 수 없습니다.' });
     } else {
