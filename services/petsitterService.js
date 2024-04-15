@@ -14,7 +14,8 @@ class PetSitterService {
 
   // 모든 펫시터 목록 조회
   async getAllPetSitters() {
-    return await this.PetSitter.find({});
+    const sitters = await this.PetSitter.find({});
+    return sitters.map((sitter) => sitter.toObject());
   }
 
   // 특정 펫시터 조회
