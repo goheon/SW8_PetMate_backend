@@ -33,17 +33,17 @@ class PetSitterService {
     return formatSitters;
   }
 
-  // 특정 펫시터 조회
-  async getPetSitterById(sitterId) {
-    const petSitter = await this.PetSitter.findOne({ sitterId: sitterId });
+  // 마이페이지 특정 펫시터 조회
+  async getPetSitterByUserId(userId) {
+    const petSitter = await this.PetSitter.findOne({ userId: userId });
 
     return petSitter;
   }
 
-  // 특정 사용자의 펫시터 조회
-  async getPetSitterByUserId(userId) {
-    const sitterInfo = await this.PetSitter.findOne({ userId: userId });
-    const sitterName = await this.User.findOne({ userId: userId });
+  // 상세예약페이지 특정 사용자의 펫시터 조회
+  async getPetSitterById(sitterId) {
+    const sitterInfo = await this.PetSitter.findOne({ sitterId: sitterId });
+    const sitterName = await this.User.findOne({ userId: sitterInfo.userId });
     const value = {
       username: sitterName.username,
       address: sitterName.address,
