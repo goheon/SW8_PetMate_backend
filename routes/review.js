@@ -6,7 +6,6 @@ import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 import { uploadFiles } from '../middlewares/imageMiddleware.js';
 
 export const reviewRouter = express.Router();
-
 const reviewService = new ReviewService();
 
 // 리뷰 작성
@@ -28,24 +27,19 @@ reviewRouter.post(
   },
 );
 
-// 전체 후기 목록 조회
-reviewRouter.get('/review/:orderId', tokenAuthenticated, async (req, res, next) => {
-  try {
-    const orderId = req.params.orderId;
-    const reviews = await reviewService.getReviewList(orderId);
 
-    for (let review of reviews) {
-      const order = await orderService.checkOrderId(review.orderId);
-      review.sitterId = order.sitterId;
-      review.userId = order.userId;
-    }
+// 전체 후기 목록 조회
+reviewRouter.get('/:orderId', tokenAuthenticated, async (req, res, next) => {
+  try {
+    const reviews = await reviewService.getReviewList();
 
     res.status(200).json({
-      message: '후기 목록 조회가 완료되었습니다.',
-      data: reviews
+      message: '전체 후기 목록 조회가 완료되었습니다.',
+      data: reviews,
     });
   } catch (error) {
     next(error);
   }
 });
+
 export default reviewRouter;
