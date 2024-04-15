@@ -1,6 +1,7 @@
 import express from 'express';
 import petSitterService from '../services/petsitterService.js';
 import orderService from '../services/orderService.js';
+import userService from '../services/userService.js';
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 
 export const sitterMyPageRouter = express.Router();
@@ -95,7 +96,42 @@ sitterMyPageRouter.get('/orderlist/:sitterId', async (req, res, next) => {
     const sitterId = req.params.sitterId;
     const result = await petSitterService.sitterOrderList(sitterId);
 
-    res.status(200).json(result);
+    const ordersWithSitterInfo = await Promise.all(
+      result.map(async (order) => {
+        const userInfo = await userService.getUserInfo(order.userId);
+        const petSitterInfo = await petSitterService.getPetSitterById(order.sitterId);
+        const petSitterUserInfo = await userService.getUserInfo(petSitterInfo.userId);
+
+        const userphone = userInfo.phone;
+        const useraddress = userInfo.address;
+        const userdetailaddress = userInfo.detailAddress;
+        const username = userInfo.username;
+        const sitterphone = petSitterUserInfo.phone;
+        const sitteraddress = petSitterUserInfo.address;
+        const sittername = petSitterUserInfo.username;
+
+        return {
+          ...order,
+          petSitterInfo,
+          sitterphone,
+          sitteraddress,
+          sittername,
+          userphone,
+          useraddress,
+          userdetailaddress,
+          username,
+        };
+      }),
+    );
+
+    if (ordersWithSitterInfo === null) {
+      return res.status(404).json({ message: '전체 예약 내역이 없습니다.' });
+    } else {
+      res.status(200).json({
+        message: '전체 예약 내역 조회가 완료되었습니다.',
+        data: ordersWithSitterInfo,
+      });
+    }
   } catch (error) {
     next(error);
   }
