@@ -1,6 +1,7 @@
 import { PetSitter } from '../db/index.js';
 import { customError } from '../middlewares/errorMiddleware.js';
 import { Order } from '../db/index.js';
+import { User } from '../db/index.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -8,11 +9,13 @@ class PetSitterService {
   constructor() {
     this.PetSitter = PetSitter;
     this.Order = Order;
+    this.User = User;
   }
 
   // 모든 펫시터 목록 조회
   async getAllPetSitters() {
-    return await this.PetSitter.find({});
+    const sitters = await this.PetSitter.find({});
+    return sitters.map((sitter) => sitter.toObject());
   }
 
   // 특정 펫시터 조회
@@ -24,7 +27,14 @@ class PetSitterService {
 
   // 특정 사용자의 펫시터 조회
   async getPetSitterByUserId(userId) {
-    return await this.PetSitter.findOne({ userId: userId });
+    const sitterInfo = await this.PetSitter.findOne({ userId: userId });
+    const sitterName = await this.User.findOne({ userId: userId });
+    const value = {
+      username: sitterName.username,
+      address: sitterName.address,
+      detailAddress: sitterName.detailAddress,
+    };
+    return { sitterInfo, value };
   }
 
   //펫시터 예약 내역 조회

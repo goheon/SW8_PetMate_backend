@@ -7,12 +7,10 @@ import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 export const sitterMyPageRouter = express.Router();
 import { uploadFiles } from '../middlewares/imageMiddleware.js';
 
-//유저Id를 통한 펫시터 정보 조회
-sitterMyPageRouter.get('/:userId', tokenAuthenticated, async (req, res, next) => {
+//펫시터 정보 조회
+sitterMyPageRouter.get('/', tokenAuthenticated, async (req, res, next) => {
   try {
-    const userId = req.params.userId;
-    const detailInfo = await petSitterService.getPetSitterByUserId(userId);
-
+    const detailInfo = await petSitterService.getPetSitterByUserId(req.userId);
     if (detailInfo === null) {
       return res.status(404).json({ message: '해당하는 펫시터를 찾을 수 없습니다.' });
     } else {
