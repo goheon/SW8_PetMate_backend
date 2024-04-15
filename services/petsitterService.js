@@ -1,10 +1,13 @@
 import { PetSitter } from '../db/index.js';
+import { customError } from '../middlewares/errorMiddleware.js';
+import { Order } from '../db/index.js';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 class PetSitterService {
   constructor() {
     this.PetSitter = PetSitter;
+    this.Order = Order;
   }
 
   // 모든 펫시터 목록 조회
@@ -22,6 +25,15 @@ class PetSitterService {
   // 특정 사용자의 펫시터 조회
   async getPetSitterByUserId(userId) {
     return await this.PetSitter.findOne({ userId: userId });
+  }
+
+  //펫시터 예약 내역 조회
+  async sitterOrderList(sitterId) {
+    const orders = await this.Order.find({ sitterId: sitterId });
+    if (orders.length === 0) {
+      throw new customError('해당하는 id와 일치하는 예약 내역이 없습니다.', 404);
+    }
+    return orders.map((order) => order.toObject());
   }
 
   // 펫시터 정보 업데이트

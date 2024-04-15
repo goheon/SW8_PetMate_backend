@@ -91,4 +91,16 @@ sitterMyPageRouter.patch('/:orderId/reject', async (req, res, next) => {
   }
 });
 
+//예약 내역 조회
+sitterMyPageRouter.get('/orderlist/:sitterId', async (req, res, next) => {
+  try {
+    const sitterId = req.params.sitterId;
+    const result = petSitterService.sitterOrderList(sitterId);
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
 export default sitterMyPageRouter;
