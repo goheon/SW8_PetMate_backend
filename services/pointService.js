@@ -22,6 +22,18 @@ class pointService {
 
     return { username: user.username, point: newBalance };
   }
-}
 
+
+  //포인트 증가 
+  async pointIncrease(sitterId, price) {
+    const sitter = await this.User.findOne({ userId: sitterId });
+    const balance = sitter.point;
+
+    const newBalance = balance + price;
+
+    await this.User.updateOne({ userId: sitterId }, { $set: { point: newBalance } }, { new: true });
+
+    return { username: sitter.username, point: newBalance };
+  }
+}
 export default new pointService();
