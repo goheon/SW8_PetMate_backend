@@ -47,9 +47,9 @@ class ReviewService {
     return { newReview, writerInfo };
   }
 
-  // 전체 이용후기 목록 조회
-  async getReviewList() {
-    return await this.Review.find({});
+  // 사용자별 후기 목록 조회
+  async getReviewList(userId) {
+    return await this.Review.find({ userId: userId });
   }
 
   // 이용후기에 댓글 추가
