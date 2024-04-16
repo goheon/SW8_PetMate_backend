@@ -10,9 +10,17 @@ class UserService {
   }
 
   // 회원정보 조회
-  async getUserInfo(userId, uploadimg) {
+  async getUserInfo(userId) {
     const userInfo = await this.User.findOne({ userId: userId });
+
     if (userInfo) {
+      let loadImage;
+      if (userInfo.image) {
+        loadImage = userInfo.image;
+      } else {
+        loadImage = 'public/images/default_profile.png';
+      }
+
       return {
         userId: userInfo.userId,
         username: userInfo.username,
@@ -21,11 +29,12 @@ class UserService {
         phone: userInfo.phone,
         address: userInfo.address,
         detailAddress: userInfo.detailAddress,
-        image: uploadimg,
+        image: loadImage,
         isRole: userInfo.isRole,
       };
+    } else {
+      throw new customError('존재하지 않는 사용자입니다.', 404);
     }
-    throw new customError('존재하지 않는 사용자 입니다.', 404);
   }
 
   // 회원가입

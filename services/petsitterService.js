@@ -27,6 +27,7 @@ class PetSitterService {
         title: sitter ? sitter.title : null,
         type: sitter ? sitter.type : null,
         hourlyRate: sitter ? sitter.hourlyRate : null,
+        image: sitter ? sitter.image[0] : null,
       };
     });
 

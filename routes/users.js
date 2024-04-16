@@ -6,16 +6,13 @@ import { uploadFiles } from '../middlewares/imageMiddleware.js';
 export const userRouter = express.Router();
 
 //회원 정보 조회
-userRouter.get('/', tokenAuthenticated, uploadFiles.single('img'), async (req, res, next) => {
+userRouter.get('/', tokenAuthenticated, async (req, res, next) => {
   try {
-    const uploadFile = req.file;
-    const uploadimg = uploadFile ? uploadFile : ['public/images/default_profile.png'];
-
-    const searchUser = await userService.getUserInfo(req.userId, uploadimg);
+    const searchUser = await userService.getUserInfo(req.userId);
 
     res.status(200).json(searchUser);
   } catch (error) {
-    next(error); // 에러를 다음 미들웨어로 전달
+    next(error);
   }
 });
 
