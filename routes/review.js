@@ -20,17 +20,18 @@ reviewRouter.post(
       const uploadimg = uploadFiles['img'] ? uploadFiles['img'].map((file) => file.location) : [];
       const result = await reviewService.writeReview(orderId, req.body, uploadimg);
 
-      res.status(200).json(res.status(200).json({ message: '리뷰 작성 완료!', result }));
+      res.status(200).json({ message: '리뷰 작성 완료!', result });
     } catch (error) {
       next(error);
     }
   },
 );
 
-// 전체 후기 목록 조회
-reviewRouter.get('/:orderId', tokenAuthenticated, async (req, res, next) => {
+// 사용자 전체 후기 목록 조회
+reviewRouter.get('/:userId', tokenAuthenticated, async (req, res, next) => {
   try {
-    const reviews = await reviewService.getReviewList();
+    const userId = req.params.userId;
+    const reviews = await reviewService.getReviewList(userId);
 
     res.status(200).json({
       message: '전체 후기 목록 조회가 완료되었습니다.',
