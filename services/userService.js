@@ -58,9 +58,16 @@ class UserService {
   }
 
   // 회원 정보 수정
-  async updateUserInfo(userId, updatedInfo) {
-    return await User.findOneAndUpdate({ userId: userId }, { $set: updatedInfo }, { new: true });
+  async updateUserInfo(userId, updatedInfo, image) {
+    const updateFields = { ...updatedInfo };
+
+    if (image) {
+      updateFields.image = image;
+    }
+
+    return await User.findOneAndUpdate({ userId: userId }, { $set: updateFields }, { new: true });
   }
+
 
   //회원탈퇴
   async deleteUser(userId) {
