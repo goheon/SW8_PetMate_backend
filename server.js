@@ -6,7 +6,7 @@ import cors from 'cors';
 import { authRouter } from './routes/auth.js';
 import { userRouter } from './routes/users.js';
 import { booklistRouter } from './routes/booklist.js';
-import { orderSitterRouter } from './routes/ordersitter.js';
+import { orderSitterRouter } from './routes/orderSitter.js';
 import { sitterMyPageRouter } from './routes/sittermypage.js';
 import { reviewRouter } from './routes/review.js';
 import { sitterslistRouter } from './routes/sitterslist.js';
