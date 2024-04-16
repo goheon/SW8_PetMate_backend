@@ -25,6 +25,7 @@ class ReviewService {
 
     const searchname = await this.User.findOne({ userId: searchuserId });
     const username = searchname.username;
+    const userProfileImg = searchname.image[0];
 
     await this.Order.findOneAndUpdate(
       { orderId: orderId },
@@ -32,16 +33,18 @@ class ReviewService {
       { new: true }, //업데이트된 정보 반환
     );
 
-    return await this.Review.create({
+    const newReview = await this.Review.create({
       orderId,
       userId: searchuserId,
       sitterId: searchsitterId,
-      username: username,
       title,
       comment,
       image: images,
       starRate,
     });
+
+    const writerInfo = { username, userProfileImg };
+    return { newReview, writerInfo };
   }
 
   // 전체 이용후기 목록 조회

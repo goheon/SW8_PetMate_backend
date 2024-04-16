@@ -18,15 +18,14 @@ reviewRouter.post(
       const orderId = req.params.orderId;
       const uploadFiles = req.files;
       const uploadimg = uploadFiles['img'] ? uploadFiles['img'].map((file) => file.path) : [];
-      await reviewService.writeReview(orderId, req.body, uploadimg);
+      const result = await reviewService.writeReview(orderId, req.body, uploadimg);
 
-      res.status(200).send('리뷰 작성 완료!');
+      res.status(200).json(res.status(200).json({ message: '리뷰 작성 완료!', result }));
     } catch (error) {
       next(error);
     }
   },
 );
-
 
 // 전체 후기 목록 조회
 reviewRouter.get('/:orderId', tokenAuthenticated, async (req, res, next) => {
