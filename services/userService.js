@@ -10,10 +10,20 @@ class UserService {
   }
 
   // 회원정보 조회
-  async getUserInfo(userId) {
+  async getUserInfo(userId, uploadimg) {
     const userInfo = await this.User.findOne({ userId: userId });
     if (userInfo) {
-      return userInfo;
+      return {
+        userId: userInfo.userId,
+        username: userInfo.username,
+        email: userInfo.email,
+        password: userInfo.password,
+        phone: userInfo.phone,
+        address: userInfo.address,
+        detailAddress: userInfo.detailAddress,
+        image: uploadimg,
+        isRole: userInfo.isRole,
+      };
     }
     throw new customError('존재하지 않는 사용자 입니다.', 404);
   }
