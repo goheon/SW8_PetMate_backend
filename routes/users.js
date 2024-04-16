@@ -53,7 +53,7 @@ userRouter.post(
   async (req, res, next) => {
     try {
       const uploadFiles = req.files['img'];
-      const uploadimg = uploadFiles ? uploadFiles.map((file) => file.path) : ['public/images/default.jpg'];
+      const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : ['public/images/default.jpg'];
       const result = await userService.registerSitter(req.userId, req.body, uploadimg);
 
       if (result.success) {

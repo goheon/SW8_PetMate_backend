@@ -29,7 +29,7 @@ class ReviewService {
 
     await this.Order.findOneAndUpdate(
       { orderId: orderId },
-      { reviewWritten: '1' },
+      // { reviewWritten: '1' },
       { new: true }, //업데이트된 정보 반환
     );
 

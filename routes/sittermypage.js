@@ -27,7 +27,7 @@ sitterMyPageRouter.put('/:sitterId', uploadFiles.fields([{ name: 'img', maxCount
     const sitterId = req.params.sitterId;
     const sitterInfo = req.body;
     const uploadFiles = req.files['img'];
-    const uploadimg = uploadFiles ? uploadFiles.map((file) => file.path) : ['public/images/default.jpg'];
+    const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : ['public/images/default.jpg'];
     const updatedPetSitter = await petSitterService.updatePetSitter(sitterId, sitterInfo, uploadimg);
 
     console.log(sitterId, sitterInfo);
