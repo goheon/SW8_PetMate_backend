@@ -1,7 +1,5 @@
 import { User } from '../db/index.js';
 import { PetSitter } from '../db/index.js';
-import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 import { customError } from '../middlewares/errorMiddleware.js';
 
 class UserService {

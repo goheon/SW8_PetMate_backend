@@ -47,7 +47,7 @@ export const userSchema = new Schema({
   },
   point: {
     type: Number,
-    required: false,
+    default: 500000,
   },
 });
 

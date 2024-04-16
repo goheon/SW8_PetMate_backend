@@ -1,7 +1,5 @@
 import express from 'express';
 import petSitterService from '../services/petsitterService.js';
-import orderService from '../services/orderService.js';
-import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 
 export const sitterslistRouter = express();
 
