@@ -62,6 +62,10 @@ class ReviewService {
   async deleteReview(reviewId) {
     return await this.Review.deleteOne({ _id: reviewId });
   }
-}
 
+  // 펫시터별 후기 목록 조회
+  async getReviewListBySitter(sitterId) {
+    return await this.Review.find({ sitterId: sitterId });
+  }
+}
 export default ReviewService;
