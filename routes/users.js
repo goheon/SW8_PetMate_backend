@@ -1,5 +1,6 @@
 import express from 'express';
 import userService from '../services/userService.js';
+import orderService from '../services/orderService.js';
 import { tokenAuthenticated } from '../middlewares/tokenMiddleware.js';
 import { uploadFiles } from '../middlewares/imageMiddleware.js';
 
@@ -65,3 +66,18 @@ userRouter.post(
     }
   },
 );
+
+//회원 예약 상태 변경(진행중 -> 완료)
+userRouter.patch('/:orderId/complete', tokenAuthenticated, async (req, res, next) => {
+  try {
+    const orderId = req.params.orderId;
+    const newState = '완료';
+    await orderService.updateOrderStatus(orderId, newState);
+
+    res.status(200).json({
+      message: '주문 상태가 완료로 변경되었습니다.',
+    });
+  } catch (error) {
+    next(error);
+  }
+});
