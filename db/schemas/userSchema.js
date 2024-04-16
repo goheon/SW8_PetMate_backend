@@ -41,6 +41,10 @@ export const userSchema = new Schema({
     type: Date,
     required: false,
   },
+  image: {
+    type: [String],
+    default: 'public/images/default_profile.png',
+  },
   point: {
     type: Number,
     required: false,

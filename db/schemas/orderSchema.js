@@ -36,7 +36,7 @@ const orderSchema = new Schema({
   },
   detailInfo: {
     type: String,
-    required: true,
+    required: false,
   },
   startDate: {
     type: Date,
