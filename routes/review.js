@@ -42,7 +42,7 @@ reviewRouter.get('/:orderId', tokenAuthenticated, async (req, res, next) => {
 });
 
 //펫시터 후기 목록 조회
-reviewRouter.get('/sitter/:sitterId', tokenAuthenticated, async (req, res, next) => {
+reviewRouter.get('/sitter/:sitterId', async (req, res, next) => {
   try {
     const sitterId = req.params.sitterId;
     const reviews = await reviewService.getReviewListBySitter(sitterId);
