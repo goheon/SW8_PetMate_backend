@@ -56,4 +56,18 @@ reviewRouter.get('/sitter/:sitterId', async (req, res, next) => {
     next(error);
   }
 });
+
+// 전체 후기 목록 조회
+reviewRouter.get('/all', async (req, res, next) => {
+  try {
+    const reviews = await reviewService.getReviewList();
+
+    res.status(200).json({
+      message: '전체 후기 목록 조회가 완료되었습니다.',
+      data: reviews,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 export default reviewRouter;

@@ -37,16 +37,3 @@ orderSitterRouter.post('/:sitterId', async (req, res, next) => {
     }
 })
 
-//펫시터 후기 목록 조회
-orderSitterRouter.get('/review/:sitterId', tokenAuthenticated, async (req, res, next) => {
-    try {
-        const reviews = await reviewService.getReviewList();
-
-        res.status(200).json({
-            message: '펫시터 후기 목록 조회가 완료되었습니다.',
-            data: reviews,
-        });
-    } catch (error) {
-        next(error);
-    }
-});
