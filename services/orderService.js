@@ -29,13 +29,9 @@ class OrderService {
   }
 
   // 주문 추가
-  async addOrder(sitterId, orderInfo, token) {
+  async addOrder(sitterId, orderInfo, userId) {
     const { orderId, pets, totalPrice, detailInfo, startDate, endDate } = orderInfo;
     const currentDate = new Date().toISOString();
-
-    const key = process.env.SECRET_KEY;
-    const decodeToken = jwt.verify(token, key);
-    const userId = decodeToken.userId;
 
     const newOrder = await this.Order.create({
       orderId,

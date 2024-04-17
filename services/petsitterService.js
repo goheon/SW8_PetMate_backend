@@ -2,8 +2,6 @@ import { PetSitter } from '../db/index.js';
 import { customError } from '../middlewares/errorMiddleware.js';
 import { Order } from '../db/index.js';
 import { User } from '../db/index.js';
-import bcrypt from 'bcrypt';
-import jwt from 'jsonwebtoken';
 
 class PetSitterService {
   constructor() {
@@ -49,6 +47,7 @@ class PetSitterService {
       username: sitterName.username,
       address: sitterName.address,
       detailAddress: sitterName.detailAddress,
+      image: sitterName.image,
     };
     return { sitterInfo, value };
   }
