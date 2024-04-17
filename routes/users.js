@@ -18,11 +18,22 @@ userRouter.get('/', tokenAuthenticated, async (req, res, next) => {
 });
 
 //회원 정보 수정
-userRouter.put('/', tokenAuthenticated, async (req, res, next) => {
+userRouter.put('/', tokenAuthenticated, uploadFiles.single('img'), async (req, res, next) => {
   try {
     const userInfo = req.body;
 
-    const updatedUser = await userService.updateUserInfo(req.userId, userInfo);
+    if (req.body.point) {
+      res.status(404).send('포인트 값은 임의로 변경할 수 없습니다.');
+    }
+    if (req.body.email) {
+      res.status(404).send('이메일은 변경할 수 없습니다.');
+    }
+
+    const uploadFile = req.file;
+
+    const uploadimg = uploadFile ? uploadFile.location : 'public/images/default_profile.png';
+
+    const updatedUser = await userService.updateUserInfo(req.userId, userInfo, uploadimg);
 
     res.status(200).json({
       message: '회원 정보가 수정되었습니다.',
@@ -53,7 +64,7 @@ userRouter.post(
   async (req, res, next) => {
     try {
       const uploadFiles = req.files['img'];
-      const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : ['public/images/default.jpg'];
+      const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : ['public/images/default.png'];
       const result = await userService.registerSitter(req.userId, req.body, uploadimg);
 
       if (result.success) {
