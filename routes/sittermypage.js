@@ -27,10 +27,8 @@ sitterMyPageRouter.put('/:sitterId', uploadFiles.fields([{ name: 'img', maxCount
     const sitterId = req.params.sitterId;
     const sitterInfo = req.body;
     const uploadFiles = req.files['img'];
-    const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : ['public/images/default.jpg'];
+    const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : null;
     const updatedPetSitter = await petSitterService.updatePetSitter(sitterId, sitterInfo, uploadimg);
-
-    console.log(sitterId, sitterInfo);
 
     if (sitterId === null) {
       return res.status(404).json({ message: '일치하는 펫시터가 없습니다.' });

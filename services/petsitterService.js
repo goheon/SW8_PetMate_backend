@@ -66,26 +66,25 @@ class PetSitterService {
     const { userId, type, phone, introduction, experience, hourlyRate, title } = updatedInfo;
     const parsedHourlyRate = JSON.parse(hourlyRate);
 
-    console.log(updatedInfo);
     const typeArr = updatedInfo.type.split(',');
     const experienceArr = updatedInfo.experience.split(',');
-    console.log(typeArr, experienceArr);
 
-    return await this.PetSitter.findOneAndUpdate(
-      { sitterId: sitterId },
-      {
-        sitterId,
-        userId,
-        image: uploadimg,
-        type: typeArr,
-        phone,
-        introduction,
-        experience: experienceArr,
-        hourlyRate: parsedHourlyRate,
-        title,
-      },
-      { new: true },
-    );
+    const updateData = {
+      sitterId,
+      userId,
+      type: typeArr,
+      phone,
+      introduction,
+      experience: experienceArr,
+      hourlyRate: parsedHourlyRate,
+      title,
+    };
+
+    if (uploadimg !== null) {
+      updateData.image = uploadimg;
+    }
+
+    return await this.PetSitter.findOneAndUpdate({ sitterId: sitterId }, updateData, { new: true });
   }
 
   // 펫시터 삭제
