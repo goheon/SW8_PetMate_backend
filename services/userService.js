@@ -62,7 +62,7 @@ class UserService {
   async updateUserInfo(userId, updatedInfo, uploadimage) {
     const updateFields = { ...updatedInfo };
 
-    if (uploadimage) {
+    if (uploadimage !== null) {
       updateFields.image = uploadimage;
     }
 

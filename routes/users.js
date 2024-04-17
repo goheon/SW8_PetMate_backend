@@ -31,7 +31,7 @@ userRouter.put('/', tokenAuthenticated, uploadFiles.single('img'), async (req, r
 
     const uploadFile = req.file;
 
-    const uploadimg = uploadFile ? uploadFile.location : 'public/images/default_profile.png';
+    const uploadimg = uploadFile ? uploadFile.location : null;
 
     const updatedUser = await userService.updateUserInfo(req.userId, userInfo, uploadimg);
 
