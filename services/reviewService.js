@@ -87,5 +87,11 @@ class ReviewService {
   async getReviewListBySitter(sitterId) {
     return await this.Review.find({ sitterId: sitterId });
   }
+
+
+  // 전체 후기 목록 조회
+  async getReviewList() {
+    return await this.Review.find({});
+  }
 }
 export default ReviewService;
