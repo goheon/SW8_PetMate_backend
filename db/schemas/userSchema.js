@@ -43,7 +43,7 @@ export const userSchema = new Schema({
   },
   image: {
     type: [String],
-    default: 'public/images/default_profile.png',
+    default: 'https://elice-project2-pet-mate.s3.ap-northeast-2.amazonaws.com/contents/default_profile.png',
   },
   point: {
     type: Number,
