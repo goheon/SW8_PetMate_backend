@@ -16,7 +16,7 @@ class UserService {
       if (userInfo.image) {
         loadImage = userInfo.image;
       } else {
-        loadImage = 'public/images/default_profile.png';
+        loadImage = 'https://elice-project2-pet-mate.s3.ap-northeast-2.amazonaws.com/contents/default_profile.png';
       }
 
       return {
@@ -29,6 +29,7 @@ class UserService {
         detailAddress: userInfo.detailAddress,
         image: loadImage,
         isRole: userInfo.isRole,
+        point: userInfo.point,
       };
     } else {
       throw new customError('존재하지 않는 사용자입니다.', 404);
@@ -61,7 +62,7 @@ class UserService {
   async updateUserInfo(userId, updatedInfo, uploadimage) {
     const updateFields = { ...updatedInfo };
 
-    if (uploadimage) {
+    if (uploadimage !== null) {
       updateFields.image = uploadimage;
     }
 

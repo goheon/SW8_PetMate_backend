@@ -4,6 +4,7 @@ import { Order } from '../db/index.js';
 import { User } from '../db/index.js';
 import { PetSitter } from '../db/index.js';
 
+
 class ReviewService {
   constructor() {
     this.Review = Review;
@@ -86,6 +87,12 @@ class ReviewService {
   // 펫시터별 후기 목록 조회
   async getReviewListBySitter(sitterId) {
     return await this.Review.find({ sitterId: sitterId });
+  }
+
+
+  // 메인 페이지 전체 후기 목록 조회
+  async getReviewAllList() {
+    return await this.Review.find({});
   }
 }
 export default ReviewService;

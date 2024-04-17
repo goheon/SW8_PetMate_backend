@@ -10,7 +10,6 @@ import { orderSitterRouter } from './routes/orderSitter.js';
 import { sitterMyPageRouter } from './routes/sittermypage.js';
 import { reviewRouter } from './routes/review.js';
 import { sitterslistRouter } from './routes/sitterslist.js';
-import { pointRouter } from './routes/point.js';
 import mongoose from 'mongoose';
 
 import errorMiddleware from './middlewares/errorMiddleware.js';
@@ -62,7 +61,6 @@ app.use('/orderSitter', orderSitterRouter);
 app.use('/sitterpage', sitterMyPageRouter);
 app.use('/booklist/review', reviewRouter);
 app.use('/sitterslist', sitterslistRouter);
-app.use('/point', pointRouter);
 
 // Start http server
 app.listen(port, () => {
