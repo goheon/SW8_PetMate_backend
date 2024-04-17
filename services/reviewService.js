@@ -2,12 +2,14 @@
 import { Review } from '../db/index.js';
 import { Order } from '../db/index.js';
 import { User } from '../db/index.js';
+import { PetSitter } from '../db/index.js';
 
 class ReviewService {
   constructor() {
     this.Review = Review;
     this.Order = Order;
     this.User = User;
+    this.PetSitter = PetSitter;
   }
 
   // 이용후기 작성
@@ -49,7 +51,22 @@ class ReviewService {
 
   // 사용자별 후기 목록 조회
   async getReviewList(userId) {
-    return await this.Review.find({ userId: userId });
+    const userComments = await this.Review.find({ userId: userId });
+    // 작성한 리뷰의 orderId로 주문 검색
+    const orderIds = userComments.map((order) => order.orderId);
+    const orders = await this.Order.find({ orderId: { $in: orderIds } });
+
+    // 예약한 펫시터와 일치하는 펫시터 찾기
+    const sitterIds = orders.map((order) => order.sitterId);
+    const sitters = await this.PetSitter.find({ sitterId: { $in: sitterIds } });
+
+    // 리뷰의 sitterId와 일치하는 펫시터의 타이틀을 코멘트와 쌍으로 가져오기
+    const commentSitterPairs = userComments.map((comment) => {
+      const sitter = sitters.find((sitter) => sitter.sitterId === comment.sitterId);
+      return { comment: comment, sitterTitle: sitter ? sitter.title : null };
+    });
+
+    return commentSitterPairs;
   }
 
   // 이용후기에 댓글 추가
