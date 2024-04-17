@@ -31,6 +31,11 @@ const reviewSchema = new Schema({
     type: Number,
     required: true,
   },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: new Date(),
+  },
 });
 
 export default reviewSchema;
