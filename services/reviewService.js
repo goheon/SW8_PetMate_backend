@@ -88,7 +88,7 @@ class ReviewService {
   // 펫시터별 후기 목록 조회
   async getReviewListBySitter(sitterId) {
     const reviews = await this.Review.find({ sitterId: sitterId });
-    console.log(sitterId);
+
     const reviewsWithValue = await Promise.all(
       reviews.map(async (review) => {
         const user = await this.User.findOne({ userId: review.userId });
