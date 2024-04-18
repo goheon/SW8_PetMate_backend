@@ -31,7 +31,7 @@ userRouter.put('/', tokenAuthenticated, uploadFiles.single('img'), async (req, r
 
     const uploadFile = req.file;
 
-    const uploadimg = uploadFile ? uploadFile.location : 'public/images/default_profile.png';
+    const uploadimg = uploadFile ? uploadFile.location : null;
 
     const updatedUser = await userService.updateUserInfo(req.userId, userInfo, uploadimg);
 
@@ -64,7 +64,9 @@ userRouter.post(
   async (req, res, next) => {
     try {
       const uploadFiles = req.files['img'];
-      const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : ['public/images/default.png'];
+      const uploadimg = uploadFiles
+        ? uploadFiles.map((file) => file.location)
+        : ['https://elice-project2-pet-mate.s3.ap-northeast-2.amazonaws.com/contents/sitter-default.jpg'];
       const result = await userService.registerSitter(req.userId, req.body, uploadimg);
 
       if (result.success) {

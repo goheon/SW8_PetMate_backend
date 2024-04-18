@@ -4,7 +4,6 @@ import { Order } from '../db/index.js';
 import { User } from '../db/index.js';
 import { PetSitter } from '../db/index.js';
 
-
 class ReviewService {
   constructor() {
     this.Review = Review;
@@ -32,7 +31,7 @@ class ReviewService {
 
     await this.Order.findOneAndUpdate(
       { orderId: orderId },
-      // { reviewWritten: '1' },
+      { reviewWritten: '1' },
       { new: true }, //업데이트된 정보 반환
     );
 

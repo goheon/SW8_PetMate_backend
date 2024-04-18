@@ -20,6 +20,7 @@ booklistRouter.get('/', tokenAuthenticated, async (req, res, next) => {
         const useraddress = userInfo.address;
         const userdetailaddress = userInfo.detailAddress;
         const username = userInfo.username;
+
         const sitterphone = petSitterUserInfo.phone;
         const sitteraddress = petSitterUserInfo.address;
         const sittername = petSitterUserInfo.username;
