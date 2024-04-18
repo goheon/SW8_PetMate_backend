@@ -7,9 +7,8 @@ export const pointRouter = express.Router();
 //포인트 증가감소
 pointRouter.patch('/:orderId', tokenAuthenticated, async (req, res, next) => {
   try {
-    const price = req.body.totalPrice;
     const orderId = req.params.orderId;
-    const result = await pointService.pointFunction(orderId, price);
+    const result = await pointService.pointFunction(orderId);
 
     res.status(200).json(result);
   } catch (error) {
