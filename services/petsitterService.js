@@ -2,12 +2,14 @@ import { PetSitter } from '../db/index.js';
 import { customError } from '../middlewares/errorMiddleware.js';
 import { Order } from '../db/index.js';
 import { User } from '../db/index.js';
+import { Review } from '../db/index.js';
 
 class PetSitterService {
   constructor() {
     this.PetSitter = PetSitter;
     this.Order = Order;
     this.User = User;
+    this.Review = Review;
   }
 
   // 모든 펫시터 목록 조회
@@ -16,19 +18,27 @@ class PetSitterService {
     const userIds = findSitters.map((user) => user.userId);
     const sitters = await this.PetSitter.find({ userId: { $in: userIds } });
 
-    const formatSitters = findSitters.map((user) => {
-      const sitter = sitters.find((sitter) => sitter.userId === user.userId);
-      return {
-        name: user.username,
-        address: user.address,
-        sitterId: sitter ? sitter.sitterId : null,
-        title: sitter ? sitter.title : null,
-        type: sitter ? sitter.type : null,
-        hourlyRate: sitter ? sitter.hourlyRate : null,
-        image: sitter ? sitter.image[0] : null,
-      };
-    });
+    const formatSitters = await Promise.all(
+      findSitters.map(async (user) => {
+        const sitter = sitters.find((sitter) => sitter.userId === user.userId);
 
+        const reviewAll = await this.Review.find({ sitterId: sitter.sitterId });
+        const starRate = reviewAll.map((review) => review.starRate);
+        const avgStar = starRate.reduce((acc, rate) => acc + rate, 0) / starRate.length;
+
+        return {
+          name: user.username,
+          address: user.address,
+          sitterId: sitter ? sitter.sitterId : null,
+          title: sitter ? sitter.title : null,
+          type: sitter ? sitter.type : null,
+          hourlyRate: sitter ? sitter.hourlyRate : null,
+          image: sitter ? sitter.image[0] : null,
+          totalReviews: reviewAll.length,
+          avgStar: avgStar,
+        };
+      }),
+    );
     return formatSitters;
   }
 

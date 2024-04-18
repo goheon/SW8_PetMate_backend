@@ -23,7 +23,7 @@ userRouter.put('/', tokenAuthenticated, uploadFiles.single('img'), async (req, r
     const userInfo = req.body;
 
     if (req.body.point) {
-      res.status(404).send('포인트 값은 임의로 변경할 수 없습니다.');
+      res.status(404).send('포인트 값은 변경할 수 없습니다.');
     }
     if (req.body.email) {
       res.status(404).send('이메일은 변경할 수 없습니다.');
@@ -64,7 +64,7 @@ userRouter.post(
   async (req, res, next) => {
     try {
       const uploadFiles = req.files['img'];
-      const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : ['public/images/default.png'];
+      const uploadimg = uploadFiles ? uploadFiles.map((file) => file.location) : ['/public/images/default.png'];
       const result = await userService.registerSitter(req.userId, req.body, uploadimg);
 
       if (result.success) {
