@@ -4,7 +4,6 @@ import { Order } from '../db/index.js';
 import { User } from '../db/index.js';
 import { PetSitter } from '../db/index.js';
 
-
 class ReviewService {
   constructor() {
     this.Review = Review;
@@ -32,7 +31,7 @@ class ReviewService {
 
     await this.Order.findOneAndUpdate(
       { orderId: orderId },
-      // { reviewWritten: '1' },
+      { reviewWritten: '1' },
       { new: true }, //업데이트된 정보 반환
     );
 
@@ -89,10 +88,35 @@ class ReviewService {
     return await this.Review.find({ sitterId: sitterId });
   }
 
-
   // 메인 페이지 전체 후기 목록 조회
   async getReviewAllList() {
-    return await this.Review.find({});
+    const allReviews = await this.Review.find({});
+
+    const reviewsWithValue = await Promise.all(
+      allReviews.map(async (review) => {
+        const user = await this.User.findOne({ userId: review.userId });
+        const order = await this.Order.findOne({ orderId: review.orderId });
+
+        if (!user || !order) {
+          throw new Error('사용자 정보 또는 주문 정보를 찾을 수 없습니다.');
+        }
+
+        const value = {
+          username: user.username,
+          address: user.address,
+          detailAddress: user.detailAddress,
+          image: user.image,
+          petInfo: order.pets
+        };
+
+        return {
+          review: review.toObject(),
+          value: value
+        };
+      })
+    );
+
+    return reviewsWithValue;
   }
 }
 export default ReviewService;
