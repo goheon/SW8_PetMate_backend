@@ -36,7 +36,20 @@ reviewRouter.get('/:userId', tokenAuthenticated, async (req, res, next) => {
     next(error);
   }
 });
+//펫시터 후기 목록 조회
+reviewRouter.get('/sitter/:sitterId', async (req, res, next) => {
+  try {
+    const sitterId = req.params.sitterId;
+    const reviews = await reviewService.getReviewListBySitter(sitterId);
 
+    res.status(200).json({
+      message: '펫시터 후기 목록 조회가 완료되었습니다.',
+      data: reviews,
+    });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // 리뷰 작성
 reviewRouter.post(
@@ -58,20 +71,7 @@ reviewRouter.post(
 );
 
 
-//펫시터 후기 목록 조회
-reviewRouter.get('/sitter/:sitterId', async (req, res, next) => {
-  try {
-    const sitterId = req.params.sitterId;
-    const reviews = await reviewService.getReviewListBySitter(sitterId);
 
-    res.status(200).json({
-      message: '펫시터 후기 목록 조회가 완료되었습니다.',
-      data: reviews,
-    });
-  } catch (error) {
-    next(error);
-  }
-});
 
 
 
