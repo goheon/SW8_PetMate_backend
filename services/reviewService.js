@@ -86,8 +86,28 @@ class ReviewService {
 
   // 펫시터별 후기 목록 조회
   async getReviewListBySitter(sitterId) {
-    return await this.Review.find({ sitterId: sitterId });
+    const reviews = await this.Review.find({ sitterId: sitterId });
+    console.log(sitterId);
+    const reviewsWithValue = await Promise.all(
+      reviews.map(async (review) => {
+        const user = await this.User.findOne({ userId: review.userId });
+
+        const value = {
+          username: user.username,
+          image: user.image
+        };
+
+        return {
+          review: review.toObject(),
+          value: value
+        };
+      })
+    );
+
+    return reviewsWithValue;
   }
+
+
 
 
   // 메인 페이지 전체 후기 목록 조회
