@@ -62,7 +62,9 @@ class ReviewService {
 
     // 리뷰의 sitterId와 일치하는 펫시터의 타이틀을 코멘트와 쌍으로 가져오기
     const commentSitterPairs = userComments.map((comment) => {
-      const sitter = sitters.find((sitter) => sitter.sitterId === comment.sitterId);
+      const order = orders.find((order) => order.orderId === comment.orderId);
+      if (!order) return null;
+      const sitter = sitters.find((sitter) => sitter.sitterId === order.sitterId);
       return { comment: comment, sitterTitle: sitter ? sitter.title : null };
     });
 
@@ -93,21 +95,18 @@ class ReviewService {
 
         const value = {
           username: user.username,
-          image: user.image
+          image: user.image,
         };
 
         return {
           review: review.toObject(),
-          value: value
+          value: value,
         };
-      })
+      }),
     );
 
     return reviewsWithValue;
   }
-
-
-
 
   // 메인 페이지 전체 후기 목록 조회
   async getReviewAllList() {
@@ -127,14 +126,14 @@ class ReviewService {
           address: user.address,
           detailAddress: user.detailAddress,
           image: user.image,
-          petInfo: order.pets
+          petInfo: order.pets,
         };
 
         return {
           review: review.toObject(),
-          value: value
+          value: value,
         };
-      })
+      }),
     );
 
     return reviewsWithValue;
