@@ -1,39 +1,44 @@
 import { Order } from '../db/index.js';
 import { User } from '../db/index.js';
+import { PetSitter } from '../db/index.js';
 import { customError } from '../middlewares/errorMiddleware.js';
 
 class pointService {
   constructor() {
     this.Order = Order;
     this.User = User;
+    this.PetSitter = PetSitter;
   }
 
-  //포인트 감소
-  async pointDecrease(userId, price) {
-    const user = await this.User.findOne({ userId: userId });
-    const balance = user.point;
+  //포인트 증가감소
+  async pointFunction(orderId, price) {
+    const order = await this.Order.findOne({ orderId: orderId });
 
-    const newBalance = balance - price;
+    const user = await this.User.findOne({ userId: order.userId });
 
-    if (newBalance < 0) {
+    const sitter = await this.PetSitter.findOne({ sitterId: order.sitterId });
+    const sitterPoint = await this.User.findOne({ userId: sitter.userId });
+
+    const userBalance = user.point;
+    const sitterBalance = sitterPoint.point;
+
+    const increase = sitterBalance + price;
+    const decrease = userBalance - price;
+
+    if (decrease < 0) {
       throw new customError('포인트가 부족해 결제를 진행할 수 없습니다.', 404);
     }
-    await this.User.updateOne({ userId: userId }, { $set: { point: newBalance } }, { new: true });
 
-    return { username: user.username, point: newBalance };
-  }
+    await this.User.updateOne({ userId: user.userId }, { $set: { point: decrease } }, { new: true });
+    await this.User.updateOne({ userId: sitterPoint.userId }, { $set: { point: increase } }, { new: true });
 
-
-  //포인트 증가 
-  async pointIncrease(sitterId, price) {
-    const sitter = await this.User.findOne({ userId: sitterId });
-    const balance = sitter.point;
-
-    const newBalance = balance + price;
-
-    await this.User.updateOne({ userId: sitterId }, { $set: { point: newBalance } }, { new: true });
-
-    return { username: sitter.username, point: newBalance };
+    return {
+      username: user.username,
+      decpoint: decrease,
+      sittername: sitterPoint.username,
+      incpoint: increase,
+    };
   }
 }
+
 export default new pointService();
