@@ -11,9 +11,9 @@ class pointService {
   }
 
   //포인트 증가감소
-  async pointFunction(orderId, price) {
+  async pointFunction(orderId) {
     const order = await this.Order.findOne({ orderId: orderId });
-
+    const price = order.totalPrice;
     const user = await this.User.findOne({ userId: order.userId });
 
     const sitter = await this.PetSitter.findOne({ sitterId: order.sitterId });

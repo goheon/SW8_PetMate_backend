@@ -41,8 +41,9 @@ class UserService {
     const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
 
     // 이메일 중복 검사
-    const joinuser = await this.User.findOne({ email: email });
-    if (joinuser) {
+    const joinuserEmail = await this.User.findOne({ email: email });
+    const joinuserPhone = await this.User.findOne({ phone: phone });
+    if (joinuserEmail || joinuserPhone) {
       throw new customError('이미 가입된 사용자입니다.', 400);
     }
 
