@@ -1,8 +1,6 @@
 import { User } from '../db/index.js';
 import { PetSitter } from '../db/index.js';
-import jwt from 'jsonwebtoken';
-import bcrypt from 'bcrypt';
-import mongoose from 'mongoose';
+import { customError } from '../middlewares/errorMiddleware.js';
 
 class UserService {
   constructor() {
@@ -12,12 +10,29 @@ class UserService {
   // 회원정보 조회
   async getUserInfo(userId) {
     const userInfo = await this.User.findOne({ userId: userId });
+
     if (userInfo) {
-      return userInfo;
+      let loadImage;
+      if (userInfo.image) {
+        loadImage = userInfo.image;
+      } else {
+        loadImage = 'https://elice-project2-pet-mate.s3.ap-northeast-2.amazonaws.com/contents/default_profile.png';
+      }
+
+      return {
+        userId: userInfo.userId,
+        username: userInfo.username,
+        email: userInfo.email,
+        password: userInfo.password,
+        phone: userInfo.phone,
+        address: userInfo.address,
+        detailAddress: userInfo.detailAddress,
+        image: loadImage,
+        isRole: userInfo.isRole,
+        point: userInfo.point,
+      };
     } else {
-      const e = new Error('존재하지 않는 사용자 아이디입니다.');
-      e.status = 404;
-      throw e;
+      throw new customError('존재하지 않는 사용자입니다.', 404);
     }
   }
 
@@ -26,18 +41,17 @@ class UserService {
     const { userId, username, email, password, phone, address, detailAddress, isRole } = info;
 
     // 이메일 중복 검사
-    const joinuser = await this.User.findOne({ email: email });
-    if (joinuser) {
-      throw new Error('이미 가입된 사용자입니다.');
+    const joinuserEmail = await this.User.findOne({ email: email });
+    const joinuserPhone = await this.User.findOne({ phone: phone });
+    if (joinuserEmail || joinuserPhone) {
+      throw new customError('이미 가입된 사용자입니다.', 400);
     }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     await User.create({
       userId,
       username,
       email,
-      password: hashedPassword,
+      password,
       phone,
       address,
       detailAddress,
@@ -46,13 +60,14 @@ class UserService {
   }
 
   // 회원 정보 수정
-  async updateUserInfo(userId, updatedInfo) {
-    // 패스워드가 전달되었을 경우 해싱
-    if (updatedInfo.password) {
-      updatedInfo.password = await bcrypt.hash(updatedInfo.password, 10);
+  async updateUserInfo(userId, updatedInfo, uploadimage) {
+    const updateFields = { ...updatedInfo };
+
+    if (uploadimage !== null) {
+      updateFields.image = uploadimage;
     }
 
-    return await User.findOneAndUpdate({ userId: userId }, { $set: updatedInfo }, { new: true });
+    return await User.findOneAndUpdate({ userId: userId }, { $set: updateFields }, { new: true });
   }
 
   //회원탈퇴
@@ -80,14 +95,17 @@ class UserService {
         return { success: false, message: '이미 펫시터 계정입니다.' };
       }
 
+      const typeArr = type.split(',');
+      const experienceArr = experience.split(',');
+
       const newSitter = await PetSitter.create({
         sitterId,
         userId,
         image: uploadimg,
-        type,
+        type: typeArr,
         phone,
         introduction,
-        experience,
+        experience: experienceArr,
         hourlyRate: parsedHourlyRate,
         title,
       });
@@ -111,13 +129,12 @@ class UserService {
     //soft delete된 사용자인지 확인
     if (user) {
       if (user.deletedAt) {
-        throw new Error('탈퇴한 회원입니다.');
+        throw new customError('탈퇴한 회원입니다.', 400);
       }
     }
 
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      throw new Error('인증 실패');
+    if (password !== user.password) {
+      throw new customError('비밀번호가 틀렸습니다.', 401);
     }
     return user;
   }
