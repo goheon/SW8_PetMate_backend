@@ -30,7 +30,7 @@ const petsitterSchema = new Schema({
   },
   image: {
     type: [String],
-    default: '/public/images/default.png',
+    default: '/images/default.png',
   },
   type: {
     type: [String],
