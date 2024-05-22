@@ -18,11 +18,7 @@ import errorMiddleware from './middlewares/errorMiddleware.js';
 dotenv.config();
 
 // Constants
-const isProduction = process.env.NODE_ENV === 'production';
 const port = process.env.PORT || 5173;
-const base = process.env.BASE || '/';
-const db_id = process.env.DB_ID;
-const db_pw = process.env.DB_PW;
 
 // Create http server
 const app = express();
@@ -39,7 +35,7 @@ app.use(
 async function connectToMongoDB() {
   try {
     await mongoose.connect(
-      `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PW}@petmate.bhm01el.mongodb.net/?retryWrites=true&w=majority&appName=PetMate`,
+      `mongodb+srv://${process.env.DB_ID}:${process.env.DB_PW}@petmate.degz6ls.mongodb.net/?retryWrites=true&w=majority&appName=PetMate`,
     );
     console.log('MongoDB 연결 성공');
   } catch (error) {
